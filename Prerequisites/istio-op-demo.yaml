@@ -1,0 +1,15 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway-ext
+        enabled: true
+        namespace: external
+        label:
+          istio: istio-ingressgateway-ext
+      - name: istio-ingressgateway-int
+        namespace: internal
+        enabled: true
+        label:
+          istio: istio-ingressgateway-int

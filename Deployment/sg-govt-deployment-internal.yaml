@@ -1,0 +1,134 @@
+global:
+  imagePullSecrets:
+  - name: axway-demo-registry
+
+  domainName: "demo.axway.com"
+  dockerRepository: "axwayproductsdemo.azurecr.io"
+  imageTag: "20211130"
+
+##################################################################################################################################
+#   A D M I N - N O D E M A N A G E R
+##################################################################################################################################
+anm:
+   enabled: true
+   image: "apim-anm-7.7"
+   ingress:
+      enabled: true
+      hosts:
+         - host: "anm-int-sggovt"
+      paths:
+         path: /
+      annotations: 
+         kubernetes.io/ingress.class: istio-ingressgateway-int
+         # The following annotations must be used only if cert-manager is deployed.
+         # They specify how the issuer 
+         cert-manager.io/cluster-issuer: letsencrypt
+         cert-manager.io/acme-challenge-type: http01
+      tls:
+         - hosts: 
+            - anm-int-sggovt.demo.axway.com
+           secretName: anm-tls-secret 
+
+##################################################################################################################################
+#   API MANAGER
+##################################################################################################################################
+apimgr:
+   enabled: true
+   image: "apim-gtw-7.7"
+   imageTag: "20211130"
+   ingress:
+      enabled: true
+      host: "manager-int-sggovt"
+      annotations: 
+         kubernetes.io/ingress.class: istio-ingressgateway-int
+         # The following annotations must be used only if cert-manager is deployed.
+         # They specify how the issuer 
+         cert-manager.io/cluster-issuer: letsencrypt
+         cert-manager.io/acme-challenge-type: http01
+      tls:
+         - hosts: 
+            - manager-int-sggovt.demo.axway.com
+           secretName: manager-tls-secret 
+
+##################################################################################################################################
+#   API TRAFFIC
+##################################################################################################################################
+apitraffic:
+   enabled: true
+   image: "apim-gtw-7.7"
+   imageTag: "20211130"
+   ingress:
+      enabled: true
+      host: "traffic-int-sggovt"
+      name: traffic
+      annotations: 
+         kubernetes.io/ingress.class: istio-ingressgateway-int
+         # The following annotations must be used only if cert-manager is deployed.
+         # They specify how the issuer 
+         cert-manager.io/cluster-issuer: letsencrypt
+         cert-manager.io/acme-challenge-type: http01
+      tls:
+         - hosts: 
+            - traffic-int-sggovt.demo.axway.com
+           secretName: traffic-tls-secret 
+
+##################################################################################################################################
+#   API PORTAL
+##################################################################################################################################
+apiportal:
+   enabled: false
+
+##################################################################################################################################
+#   INTERNAL CASSANDRA DATABASE
+##################################################################################################################################
+cassandra:
+   internal: true
+   cluster:
+      name: axway-apim-int
+      keyspace: axway-apim-int
+   persistence:
+     enabled: true
+     storageClass: "gp2"
+     size: 8Gi
+
+##################################################################################################################################
+#   INTERNAL ANALYTICS/METRICS DATABASE
+##################################################################################################################################
+mysqlmetrics:
+   internal: true
+
+##################################################################################################################################
+#   AMPLIFY AGENTS
+##################################################################################################################################
+
+agents:
+   central:
+      clientId: DOSA_02ea38d..................b17df8f
+      organizationId: 230.........343
+      environment: my-v7-environment
+      privateKey: |
+         -----BEGIN PRIVATE KEY-----
+         MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCy6I5t5R0qKHWR
+         UN7Cgzz2raYhdZzQKWktVRvNnAVaJKrmK981nNIWqB8enooRTDVFEp7XazAZGDVN
+         .....
+         .........
+         .....
+         UHIriuIHpSr6yz1Foataxpo=
+         -----END PRIVATE KEY-----
+      publicKey: |
+         -----BEGIN PUBLIC KEY-----
+         MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsuiObeUdKih1kVDewoM8
+         9q2mIXWc0ClpLVUbzZwFWiSq5ivfNZzSFqgfHp6KEUw1RRKe12swGRg1TWr5DBs/
+         .....
+         .........
+         .....
+         ClLsxTTMKk0EqOgjnNY/rlNUplgb7tnfHsEhBbtYWzQFhBQQ+sv8nK/DUljXYP9z
+         GwIDAQAB
+         -----END PUBLIC KEY-----
+   discovery:
+      enabled: false
+      agentName: "2312"
+      apimanager:
+         username: apiadmin
+         password: highly-secure
+         insecureSSL: "true"
