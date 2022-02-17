@@ -24,7 +24,7 @@ apimgr:
       enabled: false
 
    config:
-      emtAnmHosts: anm.internal
+      emtAnmHosts: anm.internal:8090
 
    extraEnvs:
       - name: listenercert_manager
@@ -63,7 +63,7 @@ apitraffic:
       enabled: false
 
    config:
-      emtAnmHosts: anm.internal
+      emtAnmHosts: anm.internal:8090
 
    extraEnvs:
       - name: listenercert_traffic
