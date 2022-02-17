@@ -86,8 +86,8 @@ secret/axway-demo-registry created
 Create secrets for internal access
 ```
 kubectl create secret generic anm-ingress-cert --from-file="Certs/anm-int/privkey.pem" --from-file="Certs/anm-int/chain.pem" --from-file="Certs/anm-int/cert.pem" -n internal
-kubectl create secret generic manager-ingress-cert --from-file="Certs/manager-int/privkey.pem" --from-file="Certs/manager-int/fullchain.pem" -n internal
-kubectl create secret generic traffic-ingress-cert --from-file="Certs/traffic-int/privkey.pem" --from-file="Certs/traffic-int/fullchain.pem" -n internal
+kubectl create secret generic manager-ingress-cert --from-file="Certs/manager-int/privkey.pem" --from-file="Certs/manager-int/chain.pem" --from-file="Certs/manager-int/cert.pem" -n internal
+kubectl create secret generic traffic-ingress-cert --from-file="Certs/traffic-int/privkey.pem" --from-file="Certs/traffic-int/chain.pem" --from-file="Certs/traffic-int/cert.pem" -n internal
 ```
 
 Create secrets for external access

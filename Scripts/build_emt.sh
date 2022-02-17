@@ -129,6 +129,7 @@ then
         --domain-cert="${CERTS_DIR}/${ENV}-cert.pem" \
         --domain-key="${CERTS_DIR}/${ENV}-key.pem" \
         --domain-key-pass-file="${CERTS_DIR}/cert_pass.txt" \
+        --fed=apiprojects/${ANM_OUTPUT_NAME}-${ANM_FED_VERSION}.fed \
         --healthcheck \
         --metrics \
         --merge-dir=${ANM_MERGE_DIR} \
