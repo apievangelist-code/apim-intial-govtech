@@ -41,7 +41,7 @@ spec:
         - portal.sggovt-ext.demoaxway.com
     route:
     - destination:
-        host: axway-apim-apiportal.external.svc.cluster.local
+        host: portal.external.svc.cluster.local
         port:
           number: 443
   - match:

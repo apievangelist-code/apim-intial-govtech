@@ -147,9 +147,9 @@ Results :
 secret/axway-demo-registry created
 
 ### Create Certs secrets
-Convert or rename the apiportal to cert and key format. THe following naming is mandatory.
+Rename the apiportal pem certs to cert and key format. The following naming is mandatory.
 ```
-openssl rsa -outform der -in Certs/portal-ext/privkey.pem -out Certs/portal-ext/apache.key
+cp Certs/portal-ext/privkey.pem Certs/portal-ext/apache.key
 openssl x509 -outform der -in Certs/portal-ext/cert.pem -out Certs/portal-ext/apache.crt
 ```
 
