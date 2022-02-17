@@ -1,0 +1,159 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-apim-int
+  namespace: internal
+spec:
+  selector:
+    istio: istio-ingressgateway-int # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: anm-http
+      protocol: HTTP
+    hosts:
+    - anm.sggovt-int.demoaxway.com
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 80
+      name: traffic-http
+      protocol: HTTP
+    hosts:
+    - traffic.sggovt-int.demoaxway.com
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: anm-https
+      protocol: HTTPS
+    hosts:
+    - anm.sggovt-int.demoaxway.com
+    tls:
+      #mode: PASSTHROUGH
+      mode: SIMPLE
+      credentialName: anm-int-ingressgateway-certs
+      # serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      # privateKey: /etc/istio/ingressgateway-certs/tls.key
+  - port:
+      number: 443
+      name: traffic-https
+      protocol: HTTPS
+    hosts:
+    - anm.sggovt-int.demoaxway.com
+    tls:
+      #mode: PASSTHROUGH
+      mode: SIMPLE
+      credentialName: traffic-int-ingressgateway-certs
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: anm-v1
+  namespace: internal
+spec:
+  hosts:
+  - anm.sggovt-int.demoaxway.com
+  gateways:
+  - gateway-apim-int
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+        - anm.sggovt-int.demoaxway.com
+    route:
+    - destination:
+        host: anm.internal.svc.cluster.local
+        port:
+          number: 8090
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: traffic-v1
+  namespace: internal
+spec:
+  hosts:
+  - traffic.sggovt-int.demoaxway.com
+  gateways:
+  - gateway-apim-int
+  http:
+  - route:
+    - destination:
+        host: traffic
+        port:
+          number: 8065
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: manager-v1
+  namespace: internal
+spec:
+  hosts:
+  - "manager.sggovt-int.demoaxway.com"
+  gateways:
+  - gateway-apim-int
+  http:
+  - route:
+    - destination:
+        host: apimgr
+        port:
+          number: 8075
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: anm-destinationrule
+  namespace: internal
+spec:
+  host: anm.sggovt-int.demoaxway.com
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    # portLevelSettings:
+    # - port:
+    #     number: 8090
+    tls:
+      mode: SIMPLE
+    connectionPool:
+      http: 
+        h2UpgradePolicy: DO_NOT_UPGRADE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: manager-destinationrule
+  namespace: internal
+spec:
+  host: manager.sggovt-int.demoaxway.com
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    # portLevelSettings:
+    # - port:
+    #     number: 8090
+    tls:
+      mode: SIMPLE
+    connectionPool:
+      http: 
+        h2UpgradePolicy: DO_NOT_UPGRADE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: traffic-destinationrule
+  namespace: internal
+spec:
+  host: traffic.sggovt-int.demoaxway.com
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    # portLevelSettings:
+    # - port:
+    #     number: 8090
+    tls:
+      mode: SIMPLE
+    connectionPool:
+      http: 
+        h2UpgradePolicy: DO_NOT_UPGRADE

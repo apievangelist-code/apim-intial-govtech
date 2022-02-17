@@ -2,26 +2,27 @@ global:
   imagePullSecrets:
   - name: axway-demo-registry
 
-  domainName: "demo.axway.com"
-  dockerRepository: "axwayproductsdemo.azurecr.io"
-  imageTag: "20211130"
+  domainName: "sggovt-ext.demoaxway.com"
+  dockerRepository: "docker-registry.demo.axway.com/demo-public"
+  imageTag: "1.0.0"
 
 ##################################################################################################################################
 #   A D M I N - N O D E M A N A G E R
 ##################################################################################################################################
 anm:
    enabled: false
+   nameOverride: "anm.internal"
 
 ##################################################################################################################################
 #   API MANAGER
 ##################################################################################################################################
 apimgr:
    enabled: true
-   image: "apim-gtw-7.7"
-   imageTag: "20211130"
+   image: "gtw-demo-ext-7.7-20211130"
+   imageTag: "1.0.3"
    ingress:
+      enabled: false
       host: "manager-ext-sggovt"
-      enabled: true
       annotations: 
          kubernetes.io/ingress.class: istio
          # The following annotations must be used only if cert-manager is deployed.
@@ -40,10 +41,10 @@ apimgr:
 ##################################################################################################################################
 apitraffic:
    enabled: true
-   image: "apim-gtw-7.7"
-   imageTag: "20211130"
+   image: "gtw-demo-ext-7.7-20211130"
+   imageTag: "1.0.3"
    ingress:
-      enabled: true
+      enabled: false
       host: "traffic-ext-sggovt"
       name: traffic
       annotations: 
@@ -66,9 +67,8 @@ apiportal:
    enabled: true
    image: "apim-portal-7.7"
    imageTag: "20211130"
-   dockerRepository: docker-registry.demo.axway.com/other-demo
    ingress:
-      enabled: true
+      enabled: false
       host: "portal-ext-sggovt"
       name: portal
       annotations: 
@@ -85,6 +85,8 @@ apiportal:
    redis:
       enabled: true
       internal: true
+
+   nameOverride: "portal"
 
 ##################################################################################################################################
 #   INTERNAL CASSANDRA DATABASE
@@ -110,6 +112,27 @@ mysqlmetrics:
 ##################################################################################################################################
 mysqlapiportal:
    internal: true
+
+##################################################################################################################################
+#   PVCs
+##################################################################################################################################
+pvcs:
+   # Events is used by ANM, APIMGR and APITRAFFIC
+   events:
+      # If disabled an emptyDir volume is used instead
+      # Useful if you stream log information to an external logging system
+      enabled: true
+      eventsVolumeClaim:
+         accessModes: [ "ReadWriteMany" ]
+         storageClassName: efs-sc
+         resources:
+            requests:
+               storage: 10Gi
+
+   opentraffic:
+      enabled: false
+   trace:
+      enabled: false
 
 ##################################################################################################################################
 #   AMPLIFY AGENTS

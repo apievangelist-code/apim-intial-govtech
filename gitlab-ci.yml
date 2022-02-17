@@ -1,0 +1,56 @@
+default:
+  image:
+    name: alpine:3.14
+    entrypoint: ["/bin/sh", "-c"]
+  tags:
+    - apigw-docker
+    - dublin
+
+
+variables:
+  EMT-SCRIPT-VERSION: 2.3.0
+  APIM-VERSION: 7.7
+  APIM-RELEASE: 20211130
+  ANM-OUTPUT-NAME: 
+  GTW-OUTPUT-NAME:
+  BASE-IMAGE-NAME:
+
+  CERTS-DIR: certs
+  FED-DIR: FED
+
+
+stages:
+  - build
+
+
+prereq:
+  stage: build
+  script:
+    - echo "Install missing packages"
+
+create-cert:
+  stage: build
+  script:
+    - echo "Create Topology certs"
+
+build-anm:
+  stage: build
+  script:
+    - echo "Build ANM image"
+
+build-gtw-int:
+  stage: build
+  script:
+    - echo "Build GTW Image for internal group"
+
+build-gtw-ext:
+  stage: build
+  script:
+    - echo "Build GTW Image for internal group"
+
+push images:
+  stage: build
+  script:
+    - 
+
+

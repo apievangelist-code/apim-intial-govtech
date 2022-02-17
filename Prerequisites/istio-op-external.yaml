@@ -1,0 +1,20 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+  name: external-gw
+spec:
+  profile: empty
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway-ext
+        enabled: true
+        namespace: ingress-external
+        label:
+          istio: istio-ingressgateway-ext
+    egressGateways:
+      - name: istio-egressgateway-ext
+        enabled: true
+        namespace: ingress-external
+        label:
+          istio: istio-egressgateway-ext
