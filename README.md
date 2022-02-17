@@ -12,6 +12,20 @@ The Axway Helmchart is compatible to use Ingress class.
 
 
 ## Prerequisites
+### Add sources in folder (only to create images)
+APIPortal demo images
+APIM License
+apim-env-module-1.1.9.jar
+mysql-connector-java-8.0.28.jar
+
+### Push API Portal default image on repository
+```
+docker load -i Sources/APIPortal_7.7_D
+ockerImage_linux-x86-64_BN663.tgz
+docker tag axway/apiportal:7.7.20211130-BN663:latest docker-registry.demo.axway.com/demo-public/apim-portal-demo-7.7-20211130:1.0.0
+docker push docker-registry.demo.axway.com/demo-public/apim-portal-demo-7.7-20211130:1.0.0
+```
+
 ### Client tools
 #### Kubectl 
 
@@ -35,11 +49,11 @@ Configure PV by changing the volumeHandle
 kubectl apply -f Prerequisites/pv-events-aws.yaml
 ```
 
-### Install External-DNS
-TO be written
+### Install External-DNS (automatic generation)
+Not required in this context
 
 ### Install cert-manager (automatic generation)
-To be written
+Not required in this context
 
 
 ## Deploy Ingress gateway
@@ -133,9 +147,16 @@ Results :
 secret/axway-demo-registry created
 
 ### Create Certs secrets
+Convert or rename the apiportal to cert and key format. THe following naming is mandatory.
+```
+openssl rsa -outform der -in Certs/portal-ext/privkey.pem -out Certs/portal-ext/apache.key
+openssl x509 -outform der -in Certs/portal-ext/cert.pem -out Certs/portal-ext/apache.crt
+```
+
+
 Create secrets for ingress access
 ```
-kubectl create secret generic portal-ingress-cert --from-file="Certs/portal-ext/privkey.pem" --from-file="Certs/portal-ext/chain.pem" --from-file="Certs/portal-ext/cert.pem" -n external
+kubectl create secret generic portal-ingress-cert --from-file="Certs/portal-ext/apache.key" --from-file="Certs/portal-ext/apache.crt" -n external
 kubectl create secret generic manager-ingress-cert --from-file="Certs/manager-ext/privkey.pem" --from-file="Certs/manager-ext/chain.pem" --from-file="Certs/manager-ext/cert.pem" -n external
 kubectl create secret generic traffic-ingress-cert --from-file="Certs/traffic-ext/privkey.pem" --from-file="Certs/traffic-ext/chain.pem" --from-file="Certs/traffic-ext/cert.pem" -n external
 ```
