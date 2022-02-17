@@ -524,6 +524,12 @@ apitraffic:
             <VMArg name="-Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"/>
          </ConfigurationFragment>
 
+      # Configure and enable HPA
+      autoscaling:
+         enabled: false
+         # maxReplicas: 4
+         # averageUtilization: 70
+
 ##################################################################################################################################
 #   API-Portal
 ##################################################################################################################################

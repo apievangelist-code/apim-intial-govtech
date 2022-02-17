@@ -97,19 +97,61 @@ apitraffic:
         mountPath: /opt/Axway/apigateway/certs
         readOnly: true
 
+   autoscaling:
+      enabled: true
+      maxReplicas: 6
+      averageUtilization: 70
+
 ##################################################################################################################################
 #   API PORTAL
 ##################################################################################################################################
 apiportal:
    enabled: true
-   image: "apim-portal-7.7"
-   imageTag: "20211130"
+   image: "apim-portal-demo-7.7-20211130"
+   imageTag: "1.0.0"
    ingress:
       enabled: false
 
    redis:
       enabled: true
       internal: true
+
+   config:
+      master:
+         name: "Master"
+         host: "apimgr"
+         port: "8075"
+      ssl:
+         enabled: false
+         generateCertificates: false
+         # Use an existing secret object for the required certificates. 
+         # Certificate and Key must be stored with keys: apache.crt and apache.key: 
+         #existingSecret: "portal-ingress-cert"
+
+   extraEnvs:
+      - name: APACHE_SSL_ON
+        value: "1"
+      # - name: APACHE_SSL_CERT
+      #    valueFrom: 
+      #    secretKeyRef:
+      #       name: portal-ingress-cert
+      #       key: apache.crt
+      # - name: APACHE_SSL_PRIVATE_KEY
+      #    valueFrom: 
+      #    secretKeyRef:
+      #       name: portal-ingress-cert
+      #       key: apache.key
+
+   extraVolumeMounts:
+      - name: ingress-cert
+        mountPath: /opt/axway/apiportal/certs/apache/
+        readOnly: true
+
+   extraVolumes:
+      - name: ingress-cert
+        secret:
+          secretName: portal-ingress-cert
+          optional: false
 
    nameOverride: "portal"
 

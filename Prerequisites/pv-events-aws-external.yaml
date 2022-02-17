@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: apim-events-pv
+  name: apim-ext-events-pv
   namespace: external
 spec:
   capacity:
