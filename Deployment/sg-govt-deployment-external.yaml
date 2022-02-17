@@ -19,22 +19,38 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.3"
+   imageTag: "1.0.7"
    ingress:
       enabled: false
-      host: "manager-ext-sggovt"
-      annotations: 
-         kubernetes.io/ingress.class: istio
-         # The following annotations must be used only if cert-manager is deployed.
-         # They specify how the issuer 
-         cert-manager.io/cluster-issuer: letsencrypt
-         cert-manager.io/acme-challenge-type: http01
-      tls:
-         - hosts: 
-            - manager-ext-sggovt.demo.axway.com
-           secretName: manager-tls-secret 
+
    config:
       emtAnmHosts: anm.internal
+
+   extraEnvs:
+      - name: listenercert_manager
+        value: /opt/Axway/apigateway/certs/manager-cert.pem
+      - name: listenerkey_manager
+        value: /opt/Axway/apigateway/certs/manager-key.pem
+      - name: listenercacert_manager
+        value: /opt/Axway/apigateway/certs/manager-ca.pem
+
+   extraVolumes:
+      - name: manager-ingress-cert
+        secret:
+          secretName: manager-ingress-cert
+          optional: false
+          items:
+          - key: chain.pem
+            path: manager-ca.pem
+          - key: privkey.pem
+            path: manager-key.pem
+          - key: cert.pem
+            path: manager-cert.pem
+
+   extraVolumeMounts:
+      - name: manager-ingress-cert
+        mountPath: /opt/Axway/apigateway/certs
+        readOnly: true
 
 ##################################################################################################################################
 #   API TRAFFIC
@@ -42,23 +58,44 @@ apimgr:
 apitraffic:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.3"
+   imageTag: "1.0.7"
    ingress:
       enabled: false
-      host: "traffic-ext-sggovt"
-      name: traffic
-      annotations: 
-         kubernetes.io/ingress.class: istio-ingressgateway-ext
-         # The following annotations must be used only if cert-manager is deployed.
-         # They specify how the issuer 
-         cert-manager.io/cluster-issuer: letsencrypt
-         cert-manager.io/acme-challenge-type: http01
-      tls:
-         - hosts: 
-            - traffic-ext-sggovt.demo.axway.com
-           secretName: traffic-tls-secret 
+
    config:
       emtAnmHosts: anm.internal
+
+   extraEnvs:
+      - name: listenercert_traffic
+        value: /opt/Axway/apigateway/certs/traffic-cert.pem
+      - name: listenerkey_traffic
+        value: /opt/Axway/apigateway/certs/traffic-key.pem
+      - name: listenercacert_traffic
+        value: /opt/Axway/apigateway/certs/traffic-ca.pem
+
+   extraVolumes:
+      - name: traffic-ingress-cert
+        secret:
+          secretName: traffic-ingress-cert
+          optional: false
+          items:
+          - key: chain.pem
+            path: traffic-ca.pem
+          - key: privkey.pem
+            path: traffic-key.pem
+          - key: cert.pem
+            path: traffic-cert.pem
+   #    - name: filebeat-config
+   #      configMap:
+   #        name: axway-elk-apim4elastic-filebeat-config
+   #    - name: certificates
+   #      secret:
+   #        secretName: axway-elk-apim4elastic-certificates
+
+   extraVolumeMounts:
+      - name: traffic-ingress-cert
+        mountPath: /opt/Axway/apigateway/certs
+        readOnly: true
 
 ##################################################################################################################################
 #   API PORTAL
@@ -69,18 +106,6 @@ apiportal:
    imageTag: "20211130"
    ingress:
       enabled: false
-      host: "portal-ext-sggovt"
-      name: portal
-      annotations: 
-         kubernetes.io/ingress.class: istio-ingressgateway-ext
-         # The following annotations must be used only if cert-manager is deployed.
-         # They specify how the issuer 
-         cert-manager.io/cluster-issuer: letsencrypt
-         cert-manager.io/acme-challenge-type: http01
-      tls:
-         - hosts: 
-            - portal-ext-sggovt.demo.axway.com
-           secretName: portal-tls-secret 
 
    redis:
       enabled: true
@@ -102,10 +127,27 @@ cassandra:
      size: 8Gi
 
 ##################################################################################################################################
+#   EXTERNAL Metrics DB
+##################################################################################################################################
+
+externalMetricsDB:
+   env:
+      - name: METRICS_DB_URL
+        value: "jdbc:mysql://mysqlmetrics.internal:3306/metrics?useSSL=false"
+      - name: METRICS_DB_USERNAME
+        value: "report"
+      - name: METRICS_DB_PASS
+        valueFrom:
+            secretKeyRef:
+               name: mysqlmetrics
+               key: mysql-password
+
+
+##################################################################################################################################
 #   INTERNAL ANALYTICS/METRICS DATABASE
 ##################################################################################################################################
 mysqlmetrics:
-   internal: true
+   internal: false
 
 ##################################################################################################################################
 #   INTERNAL API-Portal DATABASE
@@ -121,7 +163,7 @@ pvcs:
    events:
       # If disabled an emptyDir volume is used instead
       # Useful if you stream log information to an external logging system
-      enabled: true
+      enabled: false
       eventsVolumeClaim:
          accessModes: [ "ReadWriteMany" ]
          storageClassName: efs-sc

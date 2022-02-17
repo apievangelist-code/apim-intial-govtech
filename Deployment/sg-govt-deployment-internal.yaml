@@ -21,7 +21,7 @@ anm:
       enabled: false
 
    config:
-      emtTraceLevel: DEBUG
+      emtTraceLevel: INFO
 
    extraEnvs:
       - name: listenercert_anmui
@@ -62,7 +62,7 @@ apimgr:
       enabled: false
 
    config:
-      emtTraceLevel: DEBUG
+      emtTraceLevel: INFO
 
    extraEnvs:
       - name: listenercert_manager
@@ -124,7 +124,7 @@ apitraffic:
    #       - name: audit
    #         mountPath: /var/audit/
    config:
-      emtTraceLevel: DEBUG
+      emtTraceLevel: INFO
 
    extraEnvs:
       - name: listenercert_traffic
@@ -203,7 +203,7 @@ pvcs:
    events:
       # If disabled an emptyDir volume is used instead
       # Useful if you stream log information to an external logging system
-      enabled: false
+      enabled: enable
       eventsVolumeClaim:
          accessModes: [ "ReadWriteMany" ]
          storageClassName: efs-sc
