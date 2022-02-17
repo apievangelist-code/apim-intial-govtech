@@ -25,6 +25,7 @@ apimgr:
 
    config:
       emtAnmHosts: anm.internal:8090
+      emtTraceLevel: INFO
 
    extraEnvs:
       - name: listenercert_manager
@@ -205,13 +206,14 @@ pvcs:
    events:
       # If disabled an emptyDir volume is used instead
       # Useful if you stream log information to an external logging system
-      enabled: false
+      enabled: true
       eventsVolumeClaim:
          accessModes: [ "ReadWriteMany" ]
          storageClassName: efs-sc
          resources:
             requests:
                storage: 10Gi
+         volumeName: apim-ext-events-pv
 
    opentraffic:
       enabled: false

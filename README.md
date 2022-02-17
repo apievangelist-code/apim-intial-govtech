@@ -41,14 +41,6 @@ export PATH=$PWD/bin:$PATH
 #### Helm
 
 
-
-### Configure PV
-
-Configure PV by changing the volumeHandle
-```
-kubectl apply -f Prerequisites/pv-events-aws.yaml
-```
-
 ### Install External-DNS (automatic generation)
 Not required in this context
 
@@ -88,6 +80,12 @@ kubectl create namespace internal
 ```
 Don't add the label istio-injection=enabled on this namespace.
 Istio sidecar will be deployed and all MTLS flox between components will be broken. Need to investigate !
+
+### Configure PV for events
+Configure PV by changing the volumeHandle
+```
+kubectl apply -f Prerequisites/pv-events-aws-internal.yaml
+```
 
 ### Add Docker repository
 This Docker repository contains docker images for demo. This step can be ignored if Kubernetes cluster has been configured with a private docker registry.
@@ -131,6 +129,11 @@ kubectl create namespace external
 Don't add the label istio-injection=enabled on this namespace.
 Istio sidecar will be deployed and all MTLS flox between components will be broken. Need to investigate !
 
+### Configure PV for events
+Configure PV by changing the volumeHandle
+```
+kubectl apply -f Prerequisites/pv-events-aws-internal.yaml
+```
 
 ### Add Docker repository
 This Docker repository contains docker images for demo. This step can be ignored if Kubernetes cluster has been configured with a private docker registry.
@@ -174,12 +177,9 @@ helm install apim-demo-ext Helmchart/ -n external -f Deployment/sg-govt-deployme
 
 
 
-## Post configurations
+## Post Deployment step
 ### API Portal configuration
 The basic demo images isn't compatible with multiple api-manager configuration. The easiest way is to connect on the Joomla Administrator interface and then deploying it.
-
-### Apply modifications on APIM
-
 
 
 ## Support
