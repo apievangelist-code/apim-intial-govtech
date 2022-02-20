@@ -182,11 +182,29 @@ cassandra:
      storageClass: "gp2"
      size: 8Gi
 
+   # # Change that to pull from private registry. 
+   # image:
+   #   registry: docker.io
+   #   repository: bitnami/cassandra
+   #   tag: 4.0.3-debian-10-r0
+   #   #Required only if no service account are configured
+   #   pullSecrets:
+   #       - tobechanged
+
 ##################################################################################################################################
 #   INTERNAL ANALYTICS/METRICS DATABASE
 ##################################################################################################################################
 mysqlmetrics:
    internal: true
+
+   # # Change that to pull from private registry. 
+   # image:
+   #   registry: docker.io
+   #   repository: bitnami/mysql
+   #   tag: 8.0.27-debian-10-r8
+   #   #Required only if no service account are configured
+   #   pullSecrets:
+   #       - tobechanged
 
    auth: 
       database: "metrics"

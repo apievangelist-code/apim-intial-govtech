@@ -14,7 +14,7 @@ maintainers:
   name: cloud-automation community
 - email: cwiechmann@axway.com
   name: cloud-automation community
-name: axway-apim
+name: axway-apim-sggovt
 # Must have the -ro extension to support version such as v1.18.20-eks-8c579e (See https://github.com/helm/helm/issues/3810)
 kubeVersion: ">=v1.11.x-r0"
 

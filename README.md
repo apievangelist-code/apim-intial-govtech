@@ -41,6 +41,13 @@ export PATH=$PWD/bin:$PATH
 #### Helm
 
 
+
+
+Install helm plugin to push packages on repository
+helm plugin install https://github.com/chartmuseum/helm-push
+
+
+
 ### Install External-DNS (automatic generation)
 Not required in this context
 
