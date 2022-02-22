@@ -1,0 +1,762 @@
+global:
+  # The Elasticsearch Hosts used by all components
+  # This must point to the Elasticsearch service when running in Kubernetes
+  # or to an exernal Elasticsearch cluster.
+  elasticsearchHosts: "https://axway-elk-apim4elastic-elasticsearch:9200"
+  # Used by all components to verify the Elasticsearch certificate. If you 
+  # have mounted your own certificate, you can overwrite the path here.
+  elasticsearchCa: "config/certificates/ca.crt"
+  # ImagePullSecrets made available to all Deployments/StateFullSets
+  imagePullSecrets: []
+  #  - name: myRegistryKeySecretName
+  # Stack monitoring for Filebeat, Logstash, Elasticsearch and Kibana using Self-Monitoring. 
+  # Metricbeat monitoring is not yet supported in the Kubernetes deployment.
+  selfMonitoringEnabled: "true"
+  # Disable the auto generation of certificates if you plan to use your own certificates
+  # These certificates are auto created for API-Builder4Elastic, Kibana & Elasticsearch on the 
+  # initial helm install, but not during upgrades
+  generateCertificates: true
+
+##################################################################################################################################
+#          A P I - B U I L D E R 4 E L A S T I C
+##################################################################################################################################
+
+apibuilder4elastic:
+  # Enables the APIBuilder4Elastic, which is required for the solution to work. So very unlikely to disable
+  enabled: true
+  image: "cwiechmann/apibuilder4elastic"
+  imageTag: "v4.1.0"
+  imagePullPolicy: IfNotPresent
+  nameOverride: "apibuilder4leastic"
+  fullnameOverride: "Axway API-Builder4Elastic"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+  # Default replicas if autoscaling is disabled
+  replicas: 1
+  # additional labels
+  labels: {}
+  # additional annotations
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  #antiAffinity: "hard"
+  #antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+  port: 8443
+  anmUrl: "https://anm:8090"
+  apimgrUrl: "https://apimgr:8075"
+
+  # If enabled, the secret <releaseName>-apim4elastic-apibuilder4elastic-secret 
+  # is automatically created and used below as envFrom input. 
+  # Alternatively and recommended for production, create your own secret with the 
+  # same or different name and reference it in the envFrom below. 
+  # Details about the necessary environment variables can be found in 
+  # templates/apibuilder4elastic/apibuilder4elastic-secret.yaml
+  secrets: 
+    enabled: true
+    apimgrUsername: "apiadmin"
+    apimgrPassword: "apiadmin"
+    elasticsearchUsername: ""
+    elasticsearchPassword: ""
+
+  # Injects the environment variables from the ConfigMaps and Secrets into the 
+  # APIBuilder4Elastic pod. Specify your own ConfigMaps or Secrets if you don't
+  # provide Configuration and Secrets as part of this values.yaml.
+  envFrom: 
+    - configMapRef:
+        name: axway-elk-apim4elastic-apibuilder4elastic-config
+    - secretRef:
+        name: axway-elk-apim4elastic-apibuilder4elastic-secret
+
+  # A list of secrets and their paths to mount inside the pod
+  # Use this to mount your secrets (Keys & Certificates) for API-Builder into the pod
+  secretMounts: 
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /app/config/certificates
+  #  - name: custom-certificates
+  #    secretName: custom-certificate
+  #    path: /app/config/certificates
+
+  # extraVolumeMounts mounts your volumes into the API-Builder pod. 
+  # Payload is expected at /var/log/payloads by APIBuilder4Elastic
+  extraVolumeMounts: 
+  #  - name: apibuilder4elastic-payload
+  #    mountPath: /var/log/payloads
+  # APIBuilder4Elastic expects custom configuration in the config folder
+  #  - name: axway-elk-custom-config
+  #    mountPath: /app/config
+  
+  # extraVolumes is used to create additional volumes in for the API-Builder POD
+  # For instance to add payload volumes or extra config files.
+  extraVolumes: 
+  # Payloads stored by the API-Gateway OpenTraffic
+  #  - name: apibuilder4elastic-payload
+  #    nfs:
+  #      server: my-nfs-server
+  #      path: /
+  # Use hostPath volume - don't use it for production
+  #  - name: apibuilder4elastic-payload
+  #    hostPath:
+  #      path: /tmp/data/apimgr/logs/payload
+  #      type: Directory
+  # Example to add your custom configuration from a provided ConfigMap
+  #  - name: axway-elk-custom-config
+  #    configMap:
+  #      name: custom-configuration
+
+  # Setup the SSL-Configuration for API-Builder4Elastic
+  # Use secretMounts to mount your keys & certificates into pod 
+  # and configure them here.
+  ssl: {}
+  #  key: "config/certificates/apibuilder4elastic.key"
+  #  cert: "config/certificates/apibuilder4elastic.crt"
+  #  password: ""
+
+  # localAPILookup enables the Local API-Lookup feature
+  # Use extraVolumes & extraVolumeMounts to mount your custom configuration into 
+  # the API-Builder4Elastic container.
+  # To learn more read the description of parameter API_BUILDER_LOCAL_API_LOOKUP_FILE
+  # localAPILookup: "./config/api-lookup.json"
+
+  # authzConfig sets the path to the authorization config file
+  # Use extraVolumes & extraVolumeMounts to mount your custom configuration into 
+  # the API-Builder4Elastic container.
+  # To learn more read the description of parameter AUTHZ_CONFIG
+  # authzConfig: "./config/my-authorization-config.js"
+
+  # retentionPeriod sets the path to the retentionPeriod config file
+  # Use extraVolumes & extraVolumeMounts to mount your custom configuration into 
+  # the API-Builder4Elastic container.
+  # To learn more read the description of parameter RETENTION_PERIOD_CONFIG
+  # retentionPeriodConfig: "./config/my-retention-period-config.json"
+
+  # payloadEnabled set to false, API-Builder will not try to read the payload files
+  # Use extraVolumes & extraVolumeMounts to mount your payloads into 
+  # the API-Builder4Elastic container.
+  # To learn more read the description of parameter PAYLOAD_HANDLING_ENABLED
+  # payloadEnabled: "false"
+
+  # setupFlows can be used to turn off setup of Elasticsearch. This should be set to 
+  # false only for very good reasons.
+  # setupFlows: "false"
+
+  # Disables the collection of API-Management KPIs.
+  # managementKPIsEnabled: "false"
+
+  # If you do not use an API-Manager, please set this parameter to false.
+  # apimanagerEnabled: "false"
+
+  # logLevel of API-Builder4Elastic. When encoutering issues, enable debug. Also enable debug 
+  # if you want to raise an issue.
+  #logLevel: "debug"
+
+  # Configure the Elasticsearch server certificate validation for APIBuilder4Elastic. Is enabled by default.
+  # validateElasticsearchCertificate: "false"
+
+  # Resource requests for API-Builder
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "80Mi"
+    limits:
+      cpu: "500m"
+      memory: "150Mi"
+  
+  # User-Group 100 is the axway-user - Required to run timers in the container
+  podSecurityContext:
+    runAsUser: 100
+    fsGroup: 101
+  # Makes the apibuilder4elastic externally available for the Admin-Node-Manager
+  # This example is using an Nginx Ingress-Controller
+  ingress:
+    enabled: false
+  
+  # Try to place API-Builder4Elastic along with Logstash
+  #podAffinity: 
+  #  preferredDuringSchedulingIgnoredDuringExecution: 
+  #  - labelSelector:
+  #      matchExpressions: 
+  #      - key: app
+  #        operator: In
+  #        values: 
+  #        - axway-elk-apim4elastic-logstash
+  #    topologyKey: kubernetes.io/hostname
+
+  apmserver:
+    # If you want to use an external APM-Server, you can configure the URL here. 
+    # Defaults to the internal APM-Server service if enabled
+    serverUrl: {}
+    # The Certificate-Authory to validate the APM-Server certificate
+    # serverCaCertFile: "config/certificates/my-apmserver-ca.crt"
+    # You may disable the certificate check
+    # verifyServerCert: "false"
+
+##################################################################################################################################
+#          L O G S T A S H
+##################################################################################################################################
+
+# The Logstash configuration is based on the official Elastic Logstash Helm chart. You can use all the parameters documented here. 
+# https://github.com/elastic/helm-charts/blob/master/logstash/values.yaml
+
+logstash:
+  enabled: true
+  # You may override the standard version
+  # imageTag: "7.16.3"
+  # The following secrets are used to generate the secret <releaseName>-apim4elastic-logstash-secret
+  # If disabled the secret is not created and you have to provide them in your own secret and 
+  # use the envFrom.secretRef below to make it available for Logstash. 
+  # See templates/elasticApimLogstash/logstash-secret.yaml for the required environment variable names
+  logstashSecrets:
+    enabled: true
+    logstashUsername: "elastic"
+    logstashPassword: ""
+    logstashSystemUsername: "logstash_system"
+    logstashSystemPassword: ""
+  # Logstash Java-Options - Very likely for production too less memory
+  # See parameter LS_JAVA_OPTS in env-sample for more details
+  logstashJavaOpts: "-Xmx6g -Xms6g"
+  fullnameOverride: "axway-elk-apim4elastic"
+  dropTraceMessageLevels: "DEBUG,DATA"
+  # Number of replicas for Logstash
+  replicas: 1
+
+  # Controls the Logstash to Elasticsearch certificate validation mode for pipelines and monitoring
+  # Value certificate is translated into true for pipelines certificate validation. none into false
+  # Possible values: (certificate|none)
+  # Defaults to: certificate
+  # For more information please read 
+  # https://www.elastic.co/guide/en/logstash/current/plugins-outputs-elasticsearch.html#plugins-outputs-elasticsearch-ssl_certificate_verification
+
+  # Controls Logstash to Elasticsearch certificate validation mode for pipelines and monitoring
+  # Value certificate is translated into true for pipelines certificate validation. none into false
+  # Possible values: (certificate|none) - Defaults to: certificate
+  validateElasticsearchCertificate: "certificate"
+
+  # Injects the environment variables from the ConfigMaps and Secrets into the 
+  # Logstash container. Specify your own ConfigMaps or Secrets if you don't
+  # provide Configuration and Secrets as part of this values.yaml.
+  envFrom: 
+    - configMapRef:
+        name: axway-elk-apim4elastic-logstash-config
+    - secretRef:
+        name: axway-elk-apim4elastic-logstash-secret
+  extraVolumes: |
+    - name: axway-elk-apim4elastic-logstash-config
+      configMap: 
+        name: axway-elk-apim4elastic-logstash-config
+        items: 
+          - key: pipelines.yml
+            path: pipelines.yml
+    - name: axway-elk-apim4elastic-logstash-pipelines
+      configMap: 
+        name: axway-elk-apim4elastic-logstash-pipelines
+  extraVolumeMounts: |
+    - name: axway-elk-apim4elastic-logstash-config
+      mountPath: /usr/share/logstash/config/pipelines.yml
+      subPath: pipelines.yml
+    - name: axway-elk-apim4elastic-logstash-pipelines
+      mountPath: /usr/share/logstash/pipelines
+  secretMounts: 
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /usr/share/logstash/config/certificates
+  #  - name: custom-certificate
+  #    secretName: custom-certificate
+  #    path: /usr/share/logstash/config/certificates
+
+  # Logstash is the most demanding component and very much CPU-Bound. 
+  # 
+  # Due to the difficult load distribution on the available logstash instances, a relatively high limit is set here. This is 
+  # to ensure that Logstash can keep up, even if possibly too many Filebeat instances are connected by the service to a single Logstash instance
+  resources:
+    requests:
+      cpu: "2000m"
+      memory: "6.5Gi"
+    # The CPU limit for Logstash is high to avoid unnecessary many Logstash instances with 6 GB memory each.
+    limits:
+      cpu: "4000m"
+      memory: "6.5Gi"
+  extraPorts:
+    - name: beats
+      containerPort: 5044
+  # Extra labels for Logstash related resources
+  labels: {}
+  service:  
+    type: NodePort
+    ports:
+      - name: beats
+        port: 5044
+        protocol: TCP
+        targetPort: 5044
+        nodePort: 32001
+  podAnnotations: 
+    configVersion: 2
+  # How long to wait for logstash to stop gracefully
+  terminationGracePeriod: 30
+
+  extraContainers: |
+    - name: memcached
+      image: memcached:1.6.6-alpine
+##################################################################################################################################
+#          E L A S T I C S E A R C H
+##################################################################################################################################
+
+# The Elasticsearch configuration is based on the official Elasticsearch Helm chart. You can use all the parameters documented here: 
+# https://github.com/elastic/helm-charts/blob/master/elasticsearch/values.yaml
+
+# The following parameters represent only the most important parameters for the solution.
+elasticsearch:
+  enabled: true
+  # You may override the standard version
+  # imageTag: "7.16.3"
+  fullnameOverride: "axway-elk-apim4elastic-elasticsearch"
+  clusterName: "axway-apim"
+  replicas: 1
+  minimumMasterNodes: 1
+  esJavaOpts: "-Xms8g -Xmx8g"
+  protocol: https
+  # Required configuration for Elasticsearch is inject through ConfigMaps and if required 
+  # secret references. 
+  # You may override this if you like, providing externally created ConfigMaps or Secrets
+  envFrom: 
+  # The secretReference can be used to inject for instance the required key passphrase
+    - secretRef:
+        name: axway-elk-apim4elastic-elasticsearch-secret
+    - configMapRef:
+        name: axway-elk-apim4elastic-elasticsearch-env-config
+  # Once users have been created, enable security for Elasticsearch to force authentication
+  elasticsearchSecrets:
+    enabled: true
+    elasticUsername: "elastic"
+    elasticPassword: ""
+  anonymous: 
+    enabled: true
+  #  roles: "kibana_admin,superuser,beats_system,logstash_system"
+  #  username: "anonymous"
+  # SSL-Configuration for Elasticsearch - It defaults to settings below
+  ssl: {}
+  #  key: "/usr/share/elasticsearch/config/certificates/elasticsearch.key"
+  #  cert: "/usr/share/elasticsearch/config/certificates/elasticsearch.crt"
+  #  password: ""
+  # Use secretMounts to mount your external certificates into the Elasticsearch container
+  secretMounts: 
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /usr/share/elasticsearch/config/certificates
+  #  - name: custom-certificate
+  #    secretName: custom-certificate
+  #    path: /usr/share/elasticsearch/config/certificates
+
+  # By default make Elasticsearch available as a NodePort
+  service:  
+    type: NodePort
+    httpPortName: elasticsearch
+    httpPort: 9200
+    nodePort: 32002
+
+  resources:
+    requests:
+      cpu: "2000m"
+      memory: "14Gi"
+    limits:
+      cpu: "4000m"
+      memory: "16Gi"
+
+  # Define the volume claim for Elasticsearch
+  #volumeClaimTemplate:
+  #- metadata:
+  #      name: elastic-data
+  #  accessModes: [ "ReadWriteOnce" ]
+  #  storageClassName: elastic-cloud-disk
+  #  resources:
+  #    requests:
+  #      storage: 250Gi
+
+  ingress:
+    enabled: false
+
+  extraInitContainers: []
+
+  esConfig: 
+    elasticsearch.yml: |
+      #http.host: 0.0.0.0
+      network.host: 0.0.0.0
+      cluster.name: ${ELASTICSEARCH_CLUSTERNAME}
+      http.cors.allow-origin: "*"
+      http.cors.enabled: true
+      http.cors.allow-credentials: true
+      http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+      http.cors.allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization. Access-Control-Allow-Headers, Accept
+      # Don't allow (e.g. Logstash) to auto-create indices that should be created by API-Builder
+      action.auto_create_index: "-apigw-*,+*"
+      # Enable security in general
+      xpack.security.enabled: true
+      # Initially provide anonymous access, which can be changed to user based AuthN.
+      #xpack.security.authc.anonymous.roles: kibana_admin,  superuser, beats_system, logstash_system
+      #xpack.security.authc.anonymous.username: anonymous
+      xpack.monitoring.collection.enabled: ${SELF_MONITORING_ENABLED:true}
+##################################################################################################################################
+#          K I B A N A
+##################################################################################################################################
+
+# The Kibana configuration is based on the official Kibana Helm chart. You can use all the parameters documented here: 
+# https://github.com/elastic/helm-charts/blob/master/kibana/values.yaml
+
+# The following parameters represent only the most important parameters for the solution.
+kibana:
+  enabled: true
+  # You may override the standard version
+  # imageTag: "7.16.3"
+  fullnameOverride: "axway-elk-apim4elastic"
+  replicas: 1
+  # Username and Password for Kibana to send monitoring events to Elasticsearch
+  # When enabled, the provided username and password are used to create the secret 
+  # <releaseName>-apim4elastic-kibana-secret which is referenced below. 
+  # You may use your own secret and reference it here. 
+  # See templates/elasticApimKibana/kibana-secret.yaml for the required environment variable names
+  kibanaSecrets: 
+    enabled: true
+    username: ""
+    password: ""
+  # Resource limits for Kibana
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "1000m"
+      memory: "750Mi"
+  protocol: https
+  # Injects the environment variables from the ConfigMaps and Secrets into the 
+  # Kibana container. Specify your own ConfigMaps or Secrets if you don't
+  # provide Configuration and Secrets as part of this values.yaml.
+  envFrom: 
+    - secretRef:
+        name: axway-elk-apim4elastic-kibana-secret
+    - configMapRef:
+        name: axway-elk-apim4elastic-kibana-env-config
+  # Setup the SSL-Configuration for API-Builder for Elastic
+  # Use secretMounts to mount your keys & certificates into pod 
+  # and reference them here.
+  ssl: {}
+  #  key: "certificates/kibana.key"
+  #  cert: "certificates/kibana.crt"
+  #  password: ""
+
+  # Can configure the Elasticsearch server certificate validation for Kibana
+  # Possible values: (full|certificate|none) - Defaults to: full
+  # validateElasticsearchCertificate: none
+
+  secretMounts: 
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /usr/share/kibana/config/certificates
+  #  - name: custom-certificate
+  #    secretName: custom-certificate
+  #    path: /usr/share/kibana/config/certificates
+  kibanaConfig:
+    kibana.yml: |
+      # Disable security by default to fallback to anonymous user
+      # Enable this parameter to activate security for Kibana
+      xpack.security.enabled: ${KIBANA_SECURITY_ENABLED}
+      elasticsearch.username: "${KIBANA_SYSTEM_USERNAME}"
+      elasticsearch.password: "${KIBANA_SYSTEM_PASSWORD}"
+      xpack.encryptedSavedObjects.encryptionKey: "YT8d68CZE4Z3mXBxYDVqjC4hhts4H9TQ"
+      xpack.reporting.encryptionKey: "YT8d68CZE4Z3mXBxYDVqjC4hhts4H9TQ"
+      xpack.security.encryptionKey: "YT8d68CZE4Z3mXBxYDVqjC4hhts4H9TQ"
+  # Create an Ingress resource for Kibana
+  # The example is using an NGINX Ingress controller
+  ingress:
+    enabled: false
+  elasticsearchHosts: false
+
+  # Extra labels for Kibana related resources
+  labels: {}
+
+##################################################################################################################################
+#          F I L E B E A T
+##################################################################################################################################
+
+# The Filebeat configuration is based on the official Elastic Filebeat Helm chart. You can use all the parameters documented here. 
+# https://github.com/elastic/helm-charts/blob/master/filebeat/values.yaml
+
+# The following parameters represent only the most important parameters for the solution.
+filebeat:
+  # Deploy Filebeat or not
+  enabled: false
+  # You may override the standard version
+  # imageTag: "7.16.3"
+  # Set this to true, to create the filebeat ConfigMaps & Secret including the filebeat.yaml 
+  # This is useful, if you would like to run filebeat as a sidecar along with the API-Gateways and just 
+  # reference these config maps
+  createFilebeatConfig: false
+  fullnameOverride: "axway-elk-apim4elastic"
+  # Secrets used to generate the secret <releaseName>-apim4elastic-filebeat-secret
+  # which is referenced below. 
+  # You may use your own secret and reference it here. 
+  # See templates/elasticApimKibana/filebeat-secret.yaml for the required environment variable names
+  filebeatSecrets: 
+    enabled: true
+    beatsSystemUsername: "beats_system"
+    beatsSystemPassword: ""
+  # Required for the internal stack monitoring to work with Filebeat
+  elasticsearchClusterUUID: ""
+  # The number of Filebeat worker threads sending data to Logstash. See parameter: FILEBEAT_WORKER in env-sample
+  filebeatWorker: 2
+  # The gzip compression level. Setting this value to 0 disables compression. The compression level must be in the 
+  # range of 1 (best speed) to 9 (best compression). Increasing the compression level will reduce the network usage but will 
+  # increase the CPU usage.
+  compressionLevel: 3
+  # Injects the environment variables from the ConfigMaps and Secrets into the 
+  # Filebeat container. Specify your own ConfigMaps or Secrets if you don't
+  # provide Configuration and Secrets as part of this values.yaml.
+  envFrom: 
+    - configMapRef:
+        name: axway-elk-apim4elastic-filebeat-env-config
+    # Injects username & password for Elasticsearch stack monitoring
+    - secretRef:
+        name: axway-elk-apim4elastic-filebeat-secret
+  # Filebeat requires the appropriate Elasticsearch certificate to communicate with Elasticsearch. This is used by Filebeat 
+  # for stack monitoring.
+  # You can mount your own secret here otherwise a generated certificate is used, which is unlikely to work with an external 
+  # Elasticsearch instance. 
+  # The mount path must match the parameter global.elasticsearchCa. More information can be found in the env-sample 
+  # under the parameter: ELASTICSEARCH_CA
+  secretMounts: 
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /usr/share/filebeat/config/certificates
+  #  - name: custom-certificate
+  #    secretName: custom-certificate
+  #    path: /usr/share/filebeat/config/certificates
+
+  # Here you can configure the Elasticsearch server certificate validation for Filebeat (for monitoring only)
+  # Possible values: (full|strict|certificate|none) - Defaults to: full
+  # validateElasticsearchCertificate: none
+  
+  # extraVolumes is used to provide Filebeat access to the necessary log files from the API-Gateways.
+  # The API-Gateways write to the same volumes accordingly.
+  extraVolumes: []
+  #  - name: opentraffic-volume
+  #    persistentVolumeClaim:
+  #      claimName: opentraffic-pv-claim
+  #      readOnly: true
+  #  - name: traces-volume
+  #    persistentVolumeClaim:
+  #      claimName: traces-pv-claim
+  #      readOnly: true
+  #  - name: eventlogs-volume
+  #    persistentVolumeClaim:
+  #      claimName: eventlogs-pv-claim
+  #      readOnly: true
+  #  - name: auditlog-volume
+  #    persistentVolumeClaim:
+  #      claimName: auditlogs-pv-claim
+  #      readOnly: true
+ 
+  extraVolumeMounts: []
+  #  - name: opentraffic-volume
+  #    mountPath: /var/opentraffic
+  #  - name: traces-volume
+  #    mountPath: /var/trace
+  #  - name: eventlogs-volume
+  #    mountPath: /var/events
+  #  - name: auditlog-volume
+  #    mountPath: /var/audit
+
+  # Recommended resource requests for Filebeat
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "150Mi"
+    limits:
+      cpu: "1000m"
+      memory: "250Mi"
+  
+  # Filebeat configuration is added as part of the values.yaml, because the existing filebeatConfig 
+  # cannot be be overridden due to a bug in Helm. 
+  # https://github.com/helm/helm/issues/9136
+  # When this is fixed, the FilebeatConfig should become a ConfigMap using Files.get to make maintenance easier.
+  filebeatConfig: 
+    filebeat.yml: |
+      # Please don't change this file as it is supposed to be overwritten as
+      # part of fixes or enhancements.
+      #
+      # If you are missing a certain feature or discover a bug, please raise an issue instead:
+      # https://github.com/Axway-API-Management-Plus/apigateway-openlogging-elk/issues
+      # name: Filebeat ${GATEWAY_NAME:API-Gateway}
+      # Wait for max 60 seconds before stopping - This helps to avoid data loss, when stopping filebeat!
+      filebeat.shutdown_timeout: 60s
+      # Endpoint used by Metricbeat
+      http.enabled: true
+      http.host: "0.0.0.0"
+      filebeat.inputs:
+      - type: log
+        paths: ["/var/opentraffic/*_traffic*.log"]
+        close_inactive: 5m # Close filehandlers, if the file has not changed anymore
+        json.keys_under_root: true
+        json.overwrite_keys: false
+        json.add_error_key: true
+        fields_under_root: true
+        fields:
+          logtype: openlog
+          gatewayName: ${GATEWAY_NAME:"API-Gateway"}
+          gatewayRegion: ${GATEWAY_REGION:"N/A"}
+          filebeatVersion: "2"
+      - type: log
+        paths: ["/var/trace/*.trc"]
+        close_inactive: 5m # Close filehandlers, if the file has not changed anymore
+        multiline.pattern: '^\[ALERT|TRACE|DEBUG|NOTICE|INFO|WARNING|ERROR|CRITICAL|FATAL|SEVERE]'
+        multiline.negate: true
+        # any line that does not match the above pattern belongs to the previous line
+        multiline.match: after
+        fields_under_root: true
+        # The offset is used to sort the trace messages additionally to the timestamp
+        offset: true
+        # When initially started, don't try to read all existing trace message (by default around 7.8GB per API-Gateway)
+        ignore_older: "12h"
+        fields:
+          logtype: trace
+          gatewayName: ${GATEWAY_NAME:"API-Gateway"}
+          gatewayRegion: ${GATEWAY_REGION:"N/A"}
+          filebeatVersion: "2"
+      - type: log
+        paths: ["/var/events/*.log", "/var/events/processed/*.log.PROCESSED"]
+        close_inactive: 5m
+        json.keys_under_root: true
+        json.overwrite_keys: false
+        json.add_error_key: true
+        fields_under_root: true
+        # When initially started, don't try to read all existing trace message (by default around 7.8GB per API-Gateway)
+        ignore_older: "12h"
+        fields:
+          logtype: events
+          gatewayName: ${GATEWAY_NAME:"API-Gateway"}
+          gatewayRegion: ${GATEWAY_REGION:"N/A"}
+          filebeatVersion: "2"
+      - type: log
+        paths: ["/var/audit/*.log"]
+        close_inactive: 5m
+        json.keys_under_root: true
+        json.overwrite_keys: false
+        json.add_error_key: true
+        fields_under_root: true
+        fields:
+          logtype: domainaudit
+          gatewayName: ${GATEWAY_NAME:"API-Gateway"}
+          gatewayRegion: ${GATEWAY_REGION:"N/A"}
+          filebeatVersion: "2"
+      # Required for Trace-Messages logged by the API-Gateway
+      processors:
+        - add_locale:
+      output.logstash:
+        hosts: ${LOGSTASH_HOSTS}
+        worker: ${FILEBEAT_WORKERS:2}
+        bulk_max_size: ${FILEBEAT_BULK_MAX_SIZE:3072}
+        compression_level: ${FILEBEAT_COMPRESSION_LEVEL:3}
+        loadbalance: true
+        ttl: 2m
+        # Required to make TTL working
+        pipelining: 0
+      monitoring:
+        enabled: ${SELF_MONITORING_ENABLED}
+        # Get the Cluster-ID (cluster_uuid) with this simple query: https://elasticsearch1:9200/
+        # This links this filebeat instance to the Cluster with the given ID to enable monitoring
+        # It's also required to setup the beats_system user
+        cluster_uuid: ${ELASTICSEARCH_CLUSTER_UUID:ELASTICSEARCH_CLUSTER_UUID-NOT-SET}
+        elasticsearch:
+          hosts: ${ELASTICSEARCH_HOSTS}
+          ssl.enabled: true
+          ssl.certificate_authorities: ["${ELASTICSEARCH_CRT:ELASTICSEARCH_CRT-NOT-SET}"]
+          username: "${BEATS_SYSTEM_USERNAME:''}"
+          password: "${BEATS_SYSTEM_PASSWORD:''}"
+      logging.level: info
+      logging.to_stderr: true
+      logging.to_files: true
+      #logging.level: debug
+      #logging.to_files: true
+      #logging.files:
+      #  name: filebeat.dbg
+      #  keepfiles: 7
+      #  permissions: 0644
+      #logging.selectors: ["*"]
+##################################################################################################################################
+#          A P M - S E R V E R
+##################################################################################################################################
+apm-server:
+  enabled: false
+  # You may override the standard version
+  # imageTag: "7.16.3"
+  # Required for the internal stack monitoring to work with the APM-Server
+  elasticsearchClusterUUID: ""
+
+  envFrom:
+    - configMapRef:
+        name: axway-elk-apim4elastic-apmserver-env-config
+
+  secretMounts:
+    - name: certificates
+      secretName: axway-elk-apim4elastic-certificates
+      path: /usr/share/apm-server/config/certificates
+
+  # Setup the SSL-Configuration for the APM-Server
+  # Use secretMounts to mount your keys & certificates into pod 
+  # and configure them here.
+  # By default the generated key and certificate is used here
+  ssl: 
+    cert: "config/certificates/apmserver.crt"
+    key: "config/certificates/apmserver.key"
+    #  password: ""
+
+  # Here you can configure the Elasticsearch server certificate validation for the APM-Server
+  # Possible values: (full|strict|certificate|none) - Defaults to: full
+  validateElasticsearchCertificate: full
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTPS
+    initialDelaySeconds: 30
+    failureThreshold: 3
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTPS
+    initialDelaySeconds: 30
+    failureThreshold: 3
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  apmConfig:
+    apm-server.yml: |
+      apm-server:
+        host: "0.0.0.0:8200"
+        rum:
+          enabled: true
+        ssl:
+          enabled: true
+          certificate: ${APM_SERVER_CRT:""}
+          key: ${APM_SERVER_KEY:""}
+          key_passphrase: ${APM_SERVER_KEY_PASSPHRASE:""}
+      output:
+        elasticsearch:
+          hosts: "${ELASTICSEARCH_HOSTS}"
+          username: ${APM_USERNAME:""}
+          password: ${APM_PASSWORD:""}
+          ssl: 
+            certificate_authorities: ${ELASTICSEARCH_CA}
+      monitoring:
+        enabled: true
+        elasticsearch:
+          username: ${APM_USERNAME:""}
+          password: ${APM_PASSWORD:""}
+          cluster_uuid: ${ELASTICSEARCH_CLUSTER_UUID}

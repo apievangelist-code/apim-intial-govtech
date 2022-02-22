@@ -22,7 +22,6 @@ anm:
 
    config:
       emtTraceLevel: INFO
-      emtDeploymentEnabled: true
 
    extraEnvs:
       - name: listenercert_anmui
@@ -64,7 +63,6 @@ apimgr:
 
    config:
       emtTraceLevel: INFO
-      emtDeploymentEnabled: true
 
    extraEnvs:
       - name: listenercert_manager
@@ -103,31 +101,31 @@ apitraffic:
    ingress:
       enabled: false
 
-   # extraContainers:
-   #   - name: filebeat
-   #     image: docker.elastic.co/beats/filebeat:7.16.3
-   #     envFrom:
-   #       - configMapRef:
-   #           name: axway-elk-apim4elastic-filebeat-env-config
-   #       - secretRef:
-   #           name: axway-elk-apim4elastic-filebeat-secret
-   #     volumeMounts:
-   #       - name: filebeat-config
-   #         mountPath: /usr/share/filebeat/filebeat.yml
-   #         subPath: filebeat.yml
-   #       - name: certificates
-   #         mountPath: /usr/share/filebeat/config/certificates
-   #       - name: opentraffic
-   #         mountPath: /var/opentraffic
-   #       - name: trace
-   #         mountPath: /var/trace/
-   #       - name: events
-   #         mountPath: /var/events/
-   #       - name: audit
-   #         mountPath: /var/audit/
+   extraContainers:
+     - name: filebeat
+       image: docker.elastic.co/beats/filebeat:7.16.3
+       envFrom:
+         - configMapRef:
+             name: axway-elk-apim4elastic-filebeat-env-config
+         - secretRef:
+             name: axway-elk-apim4elastic-filebeat-secret
+       volumeMounts:
+         - name: filebeat-config
+           mountPath: /usr/share/filebeat/filebeat.yml
+           subPath: filebeat.yml
+         - name: certificates
+           mountPath: /usr/share/filebeat/config/certificates
+         - name: opentraffic
+           mountPath: /var/opentraffic
+         - name: trace
+           mountPath: /var/trace/
+         - name: events
+           mountPath: /var/events/
+         - name: audit
+           mountPath: /var/audit/
+
    config:
       emtTraceLevel: INFO
-      emtDeploymentEnabled: true
 
    extraEnvs:
       - name: listenercert_traffic
@@ -149,12 +147,12 @@ apitraffic:
             path: traffic-key.pem
           - key: cert.pem
             path: traffic-cert.pem
-   #    - name: filebeat-config
-   #      configMap:
-   #        name: axway-elk-apim4elastic-filebeat-config
-   #    - name: certificates
-   #      secret:
-   #        secretName: axway-elk-apim4elastic-certificates
+      - name: filebeat-config
+        configMap:
+          name: axway-elk-apim4elastic-filebeat-config
+      - name: certificates
+        secret:
+          secretName: axway-elk-apim4elastic-certificates
 
    extraVolumeMounts:
       - name: traffic-ingress-cert
@@ -189,7 +187,7 @@ cassandra:
    # image:
    #   registry: docker.io
    #   repository: bitnami/cassandra
-   #   tag: 3.11.11-debian-10-r4
+   #   tag: 4.0.3-debian-10-r0
    #   #Required only if no service account are configured
    #   pullSecrets:
    #       - tobechanged
@@ -204,7 +202,7 @@ mysqlmetrics:
    # image:
    #   registry: docker.io
    #   repository: bitnami/mysql
-   #   tag: 8.0.28-debian-10-r0
+   #   tag: 8.0.27-debian-10-r8
    #   #Required only if no service account are configured
    #   pullSecrets:
    #       - tobechanged
@@ -236,7 +234,7 @@ pvcs:
    events:
       # If disabled an emptyDir volume is used instead
       # Useful if you stream log information to an external logging system
-      enabled: true
+      enabled: enable
       eventsVolumeClaim:
          accessModes: [ "ReadWriteMany" ]
          storageClassName: efs-sc

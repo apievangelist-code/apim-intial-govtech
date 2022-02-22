@@ -183,6 +183,20 @@ helm install apim-demo-ext Helmchart/ -n external -f Deployment/sg-govt-deployme
 ```
 
 
+## Deploy Analytics components
+### Customize values
+
+
+### Deploy Helmchart
+Edit file 
+
+
+
+helm install -n apim-demo-elk -f Deployment/sg-govt-deployment-elk.yaml https://github.com/Axway-API-Management-Plus/apigateway-openlogging-elk/releases/download/v4.1.0/helm-chart-apim4elastic-v4.1.0.tgz -n internal
+
+
+Note : List of all values is here : https://github.com/Axway-API-Management-Plus/apigateway-openlogging-elk/blob/develop/helm/values.yaml
+
 
 ## Post Deployment step
 ### API Portal configuration
