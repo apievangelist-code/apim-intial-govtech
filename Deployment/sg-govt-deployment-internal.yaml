@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-int.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.0.8"
+  imageTag: "1.0.9"
 
 ##################################################################################################################################
 #   A D M I N - N O D E M A N A G E R

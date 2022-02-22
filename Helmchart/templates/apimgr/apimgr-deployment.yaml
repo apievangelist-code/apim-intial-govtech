@@ -85,15 +85,15 @@ spec:
       {{- end }}
       initContainers:
       - name: init-cassandra
-        image: {{ .Values.global.initContainerImage }}
+        image: {{ default "busybox:1.33" .Values.global.initContainerImage | quote }}
         command: ['sh', '-c', 'until nc -w 3 -v {{ template "cassandra.name" . }} {{ .Values.cassandra.service.port }}; do echo waiting for cassandra-0; sleep 2; done;']
       {{- if .Values.mysqlmetrics.internal }}
       - name: init-mysql
-        image: {{ .Values.global.initContainerImage }}
+        image: {{ default "busybox:1.33" .Values.global.initContainerImage | quote }}
         command: ['sh', '-c', 'until nc -w 3 -v {{ template "mysqlmetrics.name" . }} {{ .Values.mysqlmetrics.primary.service.port }}; do echo waiting for mysql; sleep 2; done;']
       {{- end }}
       - name: init-anm
-        image: {{ .Values.global.initContainerImage }}
+        image: {{ default "busybox:1.33" .Values.global.initContainerImage | quote }}
         command: ['sh', '-c', 'until nc -w 3 -v {{ template "anm.name" . }} {{ .Values.anm.service.port }}; do echo waiting for anm; sleep 2; done;']      
       {{- if .Values.apimgr.extraInitContainers }}
 {{ tpl .Values.apimgr.extraInitContainers . | indent 6 }}
