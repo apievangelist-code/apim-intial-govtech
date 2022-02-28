@@ -22,7 +22,7 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.8"
+   imageTag: "1.0.10"
    ingress:
       enabled: false
 
@@ -63,7 +63,7 @@ apimgr:
 apitraffic:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.8"
+   imageTag: "1.0.10"
    ingress:
       enabled: false
 

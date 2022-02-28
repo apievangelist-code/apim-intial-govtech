@@ -346,6 +346,20 @@ apimgr:
             <VMArg name="-Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"/>
          </ConfigurationFragment>
 
+   # Customize API-Manager
+   # https://docs.axway.com/bundle/axway-open-docs/page/docs/apim_administration/apimgr_admin/api_mgmt_custom/index.html#customize-api-manager-data
+   app-Config: 
+      # Set to false if you prefer to include (bake in) your jvm.xml using the mergeDir option
+      enabled: true
+      user: |
+      organization: |
+         DGPSystemID: {
+            label: 'DGP System ID'
+         }
+      application: |
+      api: |
+
+
 ##################################################################################################################################
 #   API TRAFFIC
 ##################################################################################################################################

@@ -1,0 +1,64 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-apim-ext
+  namespace: external
+spec:
+  selector:
+    istio: istio-ingressgateway-ext
+  servers:
+  - port:
+      number: 80
+      name: apim-http
+      protocol: HTTP
+    hosts:
+    - "*"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: apim-https
+      protocol: HTTPS
+    hosts:
+    - "*"
+    tls:
+      mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: apim-v1
+  namespace: external
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - gateway-apim-ext
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+        - portal.sggovt-ext.demoaxway.com
+    route:
+    - destination:
+        host: portal.external.svc.cluster.local
+        port:
+          number: 443
+  - match:
+    - port: 443
+      sniHosts:
+        - manager.sggovt-ext.demoaxway.com
+    route:
+    - destination:
+        host: apimgr.external.svc.cluster.local
+        port:
+          number: 8075
+  - match:
+    - port: 443
+      sniHosts:
+        - traffic.sggovt-ext.demoaxway.com
+    route:
+    - destination:
+        host: traffic.external.svc.cluster.local
+        port:
+          number: 8065

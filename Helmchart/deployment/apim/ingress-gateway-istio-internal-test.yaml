@@ -1,0 +1,98 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-apim-anm-int
+  namespace: internal
+spec:
+  selector:
+    istio: istio-ingressgateway-int # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: apim-anm-http
+      protocol: HTTP
+    hosts:
+    - "anm.sggovt-int.demoaxway.int"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: apim-anm-https
+      protocol: HTTPS
+    hosts:
+    - "anm.sggovt-int.demoaxway.int"
+    tls:
+      mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-apim-anm-int
+  namespace: internal
+spec:
+  selector:
+    istio: istio-ingressgateway-int # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: apim-manager-http
+      protocol: HTTP
+    hosts:
+    - "manager.sggovt-int.demoaxway.int"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: apim-manager-https
+      protocol: HTTPS
+    hosts:
+    - "manager.sggovt-int.demoaxway.int"
+    tls:
+      mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-apim-anm-int
+  namespace: internal
+spec:
+  selector:
+    istio: istio-ingressgateway-int # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: apim-traffic-http
+      protocol: HTTPs
+    hosts:
+    - "traffic.sggovt-int.demoaxway.int"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: apim-traffic-https
+      protocol: HTTPS
+    hosts:
+    - "traffic.sggovt-int.demoaxway.int"
+    tls:
+      mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: apim-anm-v1
+  namespace: internal
+spec:
+  hosts:
+  - "anm.sggovt-int.demoaxway.int"
+  gateways:
+  - gateway-apim-anm-int
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+        - anm.sggovt-int.demoaxway.int
+    route:
+    - destination:
+        host: anm.internal.svc.cluster.local
+        port:
+          number: 8091

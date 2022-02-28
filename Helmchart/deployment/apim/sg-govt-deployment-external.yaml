@@ -22,7 +22,7 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.8"
+   imageTag: "1.0.10"
    ingress:
       enabled: false
 
@@ -63,7 +63,7 @@ apimgr:
 apitraffic:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.8"
+   imageTag: "1.0.10"
    ingress:
       enabled: false
 
@@ -230,7 +230,7 @@ apiportalredis:
    # image:
    #   registry: docker.io
    #   repository: bitnami/redis
-   #   tag: 6.2.6-debian-10-r120
+   #   tag: 6.2.6-debian-10-r97
    #   #Required only if no service account are configured
    #   pullSecrets:
    #       - tobechanged

@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-int.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.0.9"
+  imageTag: "1.0.8"
 
 ##################################################################################################################################
 #   A D M I N - N O D E M A N A G E R
@@ -243,7 +243,7 @@ pvcs:
          resources:
             requests:
                storage: 10Gi
-         volumeName: apim-events-pv
+         #volumeName: apim-events-pv
 
    opentraffic:
       enabled: false
