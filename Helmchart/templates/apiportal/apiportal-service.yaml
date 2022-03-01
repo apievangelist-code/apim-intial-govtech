@@ -18,9 +18,16 @@ spec:
 {{- end }}
   ports:
   - name: {{ .Values.apiportal.service.httpPortName | default "http" }}
-    port: {{ .Values.apiportal.service.port }}
+    port: {{ .Values.apiportal.service.httpPort }}
 {{- if .Values.apiportal.service.nodePort }}
     nodePort: {{ .Values.apiportal.service.nodePort }}
+{{- end }}
+    protocol: TCP
+    targetPort: {{ .Values.apiportal.service.httpPort }}
+  - name: {{ .Values.apiportal.service.httpsPortName | default "https" }}
+    port: {{ .Values.apiportal.service.httpsPort }}
+{{- if .Values.apiportal.service.nodePortHttps }}
+    nodePort: {{ .Values.apiportal.service.nodePortHttps }}
 {{- end }}
     protocol: TCP
     targetPort: {{ .Values.apiportal.containerPorts.apiportal }}

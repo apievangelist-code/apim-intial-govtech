@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-ext.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.0.0"
+  imageTag: "1.1.0"
 
    # Setup the docker registry of the image. By default busybox hosted on docker.io
    # initContainerImage: busybox:1.33
@@ -22,7 +22,7 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.10"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 
@@ -63,7 +63,7 @@ apimgr:
 apitraffic:
    enabled: true
    image: "gtw-demo-ext-7.7-20211130"
-   imageTag: "1.0.10"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 
@@ -128,36 +128,36 @@ apiportal:
          host: "apimgr"
          port: "8075"
       ssl:
-         enabled: false
+         enabled: true
          generateCertificates: false
          # Use an existing secret object for the required certificates. 
          # Certificate and Key must be stored with keys: apache.crt and apache.key: 
-         #existingSecret: "portal-ingress-cert"
+         existingSecret: "portal-ingress-cert"
 
    extraEnvs:
-      - name: APACHE_SSL_ON
-        value: "1"
-      # - name: APACHE_SSL_CERT
-      #    valueFrom: 
-      #    secretKeyRef:
-      #       name: portal-ingress-cert
-      #       key: apache.crt
-      # - name: APACHE_SSL_PRIVATE_KEY
-      #    valueFrom: 
-      #    secretKeyRef:
-      #       name: portal-ingress-cert
-      #       key: apache.key
+   - name: APACHE_SSL_ON
+     value: "1"
+   # - name: APACHE_SSL_CERT
+   #   valueFrom: 
+   #       secretKeyRef:
+   #          name: portal-ingress-cert
+   #          key: apache.crt
+   # - name: APACHE_SSL_PRIVATE_KEY
+   #   valueFrom: 
+   #       secretKeyRef:
+   #          name: portal-ingress-cert
+   #          key: apache.key
 
-   extraVolumeMounts:
-      - name: ingress-cert
-        mountPath: /opt/axway/apiportal/certs/apache/
-        readOnly: true
+   # extraVolumeMounts:
+   #    - name: ingress-cert
+   #      mountPath: /opt/axway/apiportal/certs/apache/
+   #      readOnly: true
 
-   extraVolumes:
-      - name: ingress-cert
-        secret:
-          secretName: portal-ingress-cert
-          optional: false
+   # extraVolumes:
+   #    - name: ingress-cert
+   #      secret:
+   #        secretName: portal-ingress-cert
+   #        optional: false
 
    nameOverride: "portal"
 

@@ -47,10 +47,10 @@ spec:
           service:
             name: {{ template "apiportal.name" . }}
             port:
-              number: {{ .Values.apiportal.service.port | default .Values.anm.httpPort }}
+              number: {{ .Values.apiportal.service.httpsPort | default .Values.apiportal.containerPorts.apiportal }}
           {{- else }}
           serviceName: {{ template "apiportal.name" . }}
-          servicePort: {{ .Values.apiportal.service.port | default .Values.apiportal.httpPort }}
+          servicePort: {{ .Values.apiportal.service.httpsPort | default .Values.apiportal.containerPorts.apiportal }}
           {{- end }}
 
   {{- end }}

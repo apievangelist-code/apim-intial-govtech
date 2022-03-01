@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-int.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.0.8"
+  imageTag: "1.1.0"
 
 ##################################################################################################################################
 #   A D M I N - N O D E M A N A G E R
@@ -58,7 +58,7 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-int-7.7-20211130"
-   imageTag: "1.0.7"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 
@@ -99,7 +99,7 @@ apitraffic:
    enabled: true
    name: traffic
    image: "gtw-demo-int-7.7-20211130"
-   imageTag: "1.0.7"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 

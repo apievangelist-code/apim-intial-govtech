@@ -15,9 +15,9 @@
     GTW_INT_FED_VERSION=v1.4
     BASE_IMAGE_NAME=base-${ENV}-${APIM_VERSION}-${APIM_RELEASE}
     BASE_BUILDTAG=1.0.0
-    ANM_BUILDTAG=1.0.12
-    GTW_EXT_BUILDTAG=1.0.10
-    GTW_INT_BUILDTAG=1.0.7
+    ANM_BUILDTAG=1.1.0
+    GTW_EXT_BUILDTAG=1.1.0
+    GTW_INT_BUILDTAG=1.1.0
 
     CERTS_DIR=certs
     FED_DIR="apiprojects"
@@ -139,6 +139,8 @@ then
         exit 1
     else
         echo "[INFO] Image created Successfully"
+        # clean temp folder
+        rm -Rf temp
     fi
 else
     echo "Image ${REPO_URL}/${REPO_PATH}/${ANM_OUTPUT_NAME}:${ANM_BUILDTAG} already exist"
@@ -172,7 +174,10 @@ fi
         exit 1
     else
         echo "[INFO] Image created Successfully "
+        # clean temp folder
+        rm -Rf temp
     fi
+
 
 # Build GTW EXT image
     echo "[INFO]============================================"
@@ -202,13 +207,12 @@ fi
         exit 1
     else
         echo "[INFO] Image created Successfully "
+        # clean temp folder
+        rm -Rf temp
     fi
 
 # Push images
-    # docker push ${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG}
-    # docker push ${REPO_URL}/${REPO_PATH}/${ANM_OUTPUT_NAME}:${ANM_BUILDTAG}
-    # docker push ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG}
-    # docker push ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG}
-
-# clean temp folder
-# rm -Rf temp
+    docker push ${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${ANM_OUTPUT_NAME}:${ANM_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG}

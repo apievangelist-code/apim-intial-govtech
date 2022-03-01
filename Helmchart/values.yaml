@@ -564,8 +564,11 @@ apiportal:
    service:
       type: "ClusterIP"
       loadBalancerIP: ""
-      port: 443
+      httpPort: 80
+      httpsPort: 443
+
       nodePort: ""
+      nodePortHttps: ""
       labels: {}
       annotations: {}
 

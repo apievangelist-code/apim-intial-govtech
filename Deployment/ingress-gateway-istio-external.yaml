@@ -38,7 +38,7 @@ spec:
   - match:
     - port: 443
       sniHosts:
-        - portal.sggovt-ext.demoaxway.int
+        - portal.sggovt-ext.demoaxway.com
     route:
     - destination:
         host: portal.external.svc.cluster.local
@@ -47,7 +47,7 @@ spec:
   - match:
     - port: 443
       sniHosts:
-        - manager.sggovt-ext.demoaxway.int
+        - manager.sggovt-ext.demoaxway.com
     route:
     - destination:
         host: apimgr.external.svc.cluster.local
@@ -56,7 +56,7 @@ spec:
   - match:
     - port: 443
       sniHosts:
-        - traffic.sggovt-ext.demoaxway.int
+        - traffic.sggovt-ext.demoaxway.com
     route:
     - destination:
         host: traffic.external.svc.cluster.local
