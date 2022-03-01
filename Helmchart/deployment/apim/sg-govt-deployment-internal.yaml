@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-int.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.0.9"
+  imageTag: "1.1.0"
 
    # Setup the docker registry of the image. By default busybox hosted on docker.io
    #initContainerImage: busybox:1.33
@@ -61,7 +61,7 @@ anm:
 apimgr:
    enabled: true
    image: "gtw-demo-int-7.7-20211130"
-   imageTag: "1.0.7"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 
@@ -102,7 +102,7 @@ apitraffic:
    enabled: true
    name: traffic
    image: "gtw-demo-int-7.7-20211130"
-   imageTag: "1.0.7"
+   imageTag: "1.1.0"
    ingress:
       enabled: false
 
@@ -192,7 +192,7 @@ cassandra:
    # image:
    #   registry: docker.io
    #   repository: bitnami/cassandra
-   #   tag: 4.0.3-debian-10-r0
+   #   tag: 3.11.11-debian-10-r4
    #   #Required only if no service account are configured
    #   pullSecrets:
    #       - tobechanged
@@ -207,7 +207,7 @@ mysqlmetrics:
    # image:
    #   registry: docker.io
    #   repository: bitnami/mysql
-   #   tag: 8.0.27-debian-10-r8
+   #   tag: 8.0.28-debian-10-r0
    #   #Required only if no service account are configured
    #   pullSecrets:
    #       - tobechanged
