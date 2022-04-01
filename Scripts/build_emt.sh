@@ -104,73 +104,73 @@ else
     echo "Image ${REPO_URL}/${REPO_PATH}/${ANM_OUTPUT_NAME}:${ANM_BUILDTAG} already exist"
 fi
 
-# # Build GTW INT image
-#     echo "[INFO]============================================"
-#     echo "[INFO] Creating GTW INT Image"
-#     echo "[INFO]============================================"
+# Build GTW INT image
+    echo "[INFO]============================================"
+    echo "[INFO] Creating GTW INT Image"
+    echo "[INFO]============================================"
 
-#     echo ${CERT_PASS} > "${TMP_DIR}/cert_pass.txt"
+    echo ${CERT_PASS} > "${TMP_DIR}/cert_pass.txt"
 
-#     echo "[INFO] Creating merge path"
-#     mkdir -p ${GTW_MERGE_DIR}/ext/lib
-#     cp ${SOURCE_DIR}/mysql-connector-java-*.jar ${GTW_MERGE_DIR}/ext/lib
-#     #Merge JAR librarie to add env modules
-#     cp ${SOURCE_DIR}/apim-env-module-*.jar ${GTW_MERGE_DIR}/ext/lib
+    echo "[INFO] Creating merge path"
+    mkdir -p ${GTW_MERGE_DIR}/ext/lib
+    cp ${SOURCE_DIR}/mysql-connector-java-*.jar ${GTW_MERGE_DIR}/ext/lib
+    #Merge JAR librarie to add env modules
+    cp ${SOURCE_DIR}/apim-env-module-*.jar ${GTW_MERGE_DIR}/ext/lib
 
-#     echo "[INFO]Running command to create image"
-#     if ! "${EMT_DIR}/build_gw_image.py" \
-#         --out-image ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG} \
-#         --parent-image=${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG} \
-#         --domain-cert="${CERTS_DIR}/${ENV}-cert.pem" \
-#         --domain-key="${CERTS_DIR}/${ENV}-key.pem" \
-#         --domain-key-pass-file="${CERTS_DIR}/cert_pass.txt" \
-#         --fed=${FED_DIR}/${GTW_INT_OUTPUT_NAME}-${GTW_INT_FED_VERSION}.fed \
-#         --license="${SOURCE_DIR}/API-7.7-Docker-Temp.lic" \
-#         --group-id="${APIM_GRP_INT_NAME}" \
-#         --merge-dir=${GTW_MERGE_DIR}; then
-#         echo "[ERROR] Unable to create Image "
-#         exit 1
-#     else
-#         echo "[INFO] Image created Successfully "
-#         # clean temp folder
-#         rm -Rf temp
-#     fi
+    echo "[INFO]Running command to create image"
+    if ! "${EMT_DIR}/build_gw_image.py" \
+        --out-image ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG} \
+        --parent-image=${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG} \
+        --domain-cert="${CERTS_DIR}/${ENV}-cert.pem" \
+        --domain-key="${CERTS_DIR}/${ENV}-key.pem" \
+        --domain-key-pass-file="${CERTS_DIR}/cert_pass.txt" \
+        --fed=${FED_DIR}/${GTW_INT_OUTPUT_NAME}-${GTW_INT_FED_VERSION}.fed \
+        --license="${SOURCE_DIR}/API-7.7-Docker-Temp.lic" \
+        --group-id="${APIM_GRP_INT_NAME}" \
+        --merge-dir=${GTW_MERGE_DIR}; then
+        echo "[ERROR] Unable to create Image "
+        exit 1
+    else
+        echo "[INFO] Image created Successfully "
+        # clean temp folder
+        rm -Rf temp
+    fi
 
 
-# # Build GTW EXT image
-#     echo "[INFO]============================================"
-#     echo "[INFO] Creating GTW EXT Image"
-#     echo "[INFO]============================================"
+# Build GTW EXT image
+    echo "[INFO]============================================"
+    echo "[INFO] Creating GTW EXT Image"
+    echo "[INFO]============================================"
 
-#     echo ${CERT_PASS} > "${TMP_DIR}/cert_pass.txt"
+    echo ${CERT_PASS} > "${TMP_DIR}/cert_pass.txt"
 
-#     echo "[INFO] Creating merge path"
-#     mkdir -p ${GTW_MERGE_DIR}/ext/lib
-#     cp ${SOURCE_DIR}/mysql-connector-java-*.jar ${GTW_MERGE_DIR}/ext/lib
-#     #Merge JAR librarie to add env modules
-#     cp ${SOURCE_DIR}/apim-env-module-*.jar ${GTW_MERGE_DIR}/ext/lib
+    echo "[INFO] Creating merge path"
+    mkdir -p ${GTW_MERGE_DIR}/ext/lib
+    cp ${SOURCE_DIR}/mysql-connector-java-*.jar ${GTW_MERGE_DIR}/ext/lib
+    #Merge JAR librarie to add env modules
+    cp ${SOURCE_DIR}/apim-env-module-*.jar ${GTW_MERGE_DIR}/ext/lib
 
-#     echo "[INFO]Running command to create image"
-#     if ! "${EMT_DIR}/build_gw_image.py" \
-#         --out-image ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG} \
-#         --parent-image=${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG} \
-#         --domain-cert="${CERTS_DIR}/${ENV}-cert.pem" \
-#         --domain-key="${CERTS_DIR}/${ENV}-key.pem" \
-#         --domain-key-pass-file="${CERTS_DIR}/cert_pass.txt" \
-#         --fed=${FED_DIR}/${GTW_EXT_OUTPUT_NAME}-${GTW_EXT_FED_VERSION}.fed \
-#         --license="${SOURCE_DIR}/API-7.7-Docker-Temp.lic" \
-#         --group-id="${APIM_GRP_EXT_NAME}" \
-#         --merge-dir=${GTW_MERGE_DIR}; then
-#         echo "[ERROR] Unable to create Image "
-#         exit 1
-#     else
-#         echo "[INFO] Image created Successfully "
-#         # clean temp folder
-#         rm -Rf temp
-#     fi
+    echo "[INFO]Running command to create image"
+    if ! "${EMT_DIR}/build_gw_image.py" \
+        --out-image ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG} \
+        --parent-image=${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG} \
+        --domain-cert="${CERTS_DIR}/${ENV}-cert.pem" \
+        --domain-key="${CERTS_DIR}/${ENV}-key.pem" \
+        --domain-key-pass-file="${CERTS_DIR}/cert_pass.txt" \
+        --fed=${FED_DIR}/${GTW_EXT_OUTPUT_NAME}-${GTW_EXT_FED_VERSION}.fed \
+        --license="${SOURCE_DIR}/API-7.7-Docker-Temp.lic" \
+        --group-id="${APIM_GRP_EXT_NAME}" \
+        --merge-dir=${GTW_MERGE_DIR}; then
+        echo "[ERROR] Unable to create Image "
+        exit 1
+    else
+        echo "[INFO] Image created Successfully "
+        # clean temp folder
+        rm -Rf temp
+    fi
 
 # Push images
-    # docker push ${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${BASE_IMAGE_NAME}:${BASE_BUILDTAG}
     docker push ${REPO_URL}/${REPO_PATH}/${ANM_OUTPUT_NAME}:${ANM_BUILDTAG}
-    # docker push ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG}
-    # docker push ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${GTW_EXT_OUTPUT_NAME}:${GTW_EXT_BUILDTAG}
+    docker push ${REPO_URL}/${REPO_PATH}/${GTW_INT_OUTPUT_NAME}:${GTW_INT_BUILDTAG}
