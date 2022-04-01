@@ -18,6 +18,14 @@ APIM License
 apim-env-module-1.1.9.jar
 mysql-connector-java-8.0.28.jar
 
+### Set variables
+Copy the template and edit it.
+```
+cp conf/variables.template conf/variables
+vi conf/variables
+```
+All values must be setted.
+
 ### Push API Portal default image on repository
 ```
 docker load -i Sources/APIPortal_7.7_D

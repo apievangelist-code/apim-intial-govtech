@@ -28,7 +28,7 @@ apimgr:
 
    config:
       emtAnmHosts: anm.internal:8090
-      emtTraceLevel: INFO
+      emtTraceLevel: DEBUG
       emtDeploymentEnabled: true
 
    extraEnvs:
@@ -56,6 +56,16 @@ apimgr:
       - name: manager-ingress-cert
         mountPath: /opt/Axway/apigateway/certs
         readOnly: true
+
+   # Customize API-Manager
+   # https://docs.axway.com/bundle/axway-open-docs/page/docs/apim_administration/apimgr_admin/api_mgmt_custom/index.html#customize-api-manager-data
+   appconfig: 
+      # Set to false if no modification is required
+      enabled: false
+      organization: |
+         DGPSystemID: {
+            label: 'DGP System ID'
+         }
 
 ##################################################################################################################################
 #   API TRAFFIC

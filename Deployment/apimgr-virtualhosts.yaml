@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: admin
+  namespace: internal
+spec:
+  hosts:
+  - 10-73-30-27.internal.pod.cluster.local
+  ports:
+  - number: 8085
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+---

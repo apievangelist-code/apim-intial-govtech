@@ -4,7 +4,7 @@ global:
 
   domainName: "sggovt-int.demoaxway.com"
   dockerRepository: "docker-registry.demo.axway.com/demo-public"
-  imageTag: "1.1.0"
+  imageTag: "1.1.2"
 
 ##################################################################################################################################
 #   A D M I N - N O D E M A N A G E R
@@ -21,7 +21,7 @@ anm:
       enabled: false
 
    config:
-      emtTraceLevel: INFO
+      emtTraceLevel: DEBUG
       emtDeploymentEnabled: true
 
    extraEnvs:
@@ -51,6 +51,11 @@ anm:
         readOnly: true
 
    # nameOverride: "anm"
+   service:
+      httpPortName: anm
+
+   # podAnnotations:
+   #    sidecar.istio.io/inject: "false"
 
 ##################################################################################################################################
 #   API MANAGER
@@ -61,9 +66,12 @@ apimgr:
    imageTag: "1.1.0"
    ingress:
       enabled: false
+   containerPorts:
+      manager: 8075
+      admin: 8085
 
    config:
-      emtTraceLevel: INFO
+      emtTraceLevel: DEBUG
       emtDeploymentEnabled: true
 
    extraEnvs:
@@ -92,6 +100,27 @@ apimgr:
         mountPath: /opt/Axway/apigateway/certs
         readOnly: true
 
+   service:
+      ports:
+      - name: manager
+        port: 8075
+        targetPort: 8075
+        nodePort: ""
+        ingress: 
+         enabled: true
+         host: manager      
+
+   # Customize API-Manager
+   # https://docs.axway.com/bundle/axway-open-docs/page/docs/apim_administration/apimgr_admin/api_mgmt_custom/index.html#customize-api-manager-data
+   appconfig: 
+      # Set to false if no modification is required
+      enabled: false
+      organization: |
+         DGPSystemID: {
+            label: 'DGP System ID'
+         }
+
+
 ##################################################################################################################################
 #   API TRAFFIC
 ##################################################################################################################################
@@ -100,6 +129,14 @@ apitraffic:
    name: traffic
    image: "gtw-demo-int-7.7-20211130"
    imageTag: "1.1.0"
+
+   containerPorts:
+      traffic: 8065
+      plain: 8080
+      tls: 8081
+      oauth: 8089
+      admin: 8085
+
    ingress:
       enabled: false
 
@@ -126,7 +163,7 @@ apitraffic:
    #       - name: audit
    #         mountPath: /var/audit/
    config:
-      emtTraceLevel: INFO
+      emtTraceLevel: DEBUG
       emtDeploymentEnabled: true
 
    extraEnvs:
@@ -165,6 +202,7 @@ apitraffic:
       enabled: true
       maxReplicas: 6
       averageUtilization: 70
+
 
 ##################################################################################################################################
 #   API PORTAL

@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: admin-sidecar
+  namespace: internal
+spec:
+  workloadSelector:
+    labels:
+      app.kubernetes.io/component: apimgr
+      app.kubernetes.io/component: apitraffic
+  ingress:
+  - port:
+      number: 8085
+      protocol: HTTPS
+      name: admin
+    defaultEndpoint: unix:///var/run/someuds.sock
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: admin-anm-sidecar
+  namespace: internal
+spec:
+  workloadSelector:
+    labels:
+      app.kubernetes.io/component: apimgr
+      app.kubernetes.io/component: apitraffic
+  egress:
+  - port:
+      number: 8085
+      protocol: HTTPS
+      name: egressadmin
+    hosts:
+    - "internal/*"
+  - hosts:
+    - "external/*"

@@ -62,3 +62,12 @@ spec:
         host: traffic.external.svc.cluster.local
         port:
           number: 8065
+  - match:
+    - port: 443
+      sniHosts:
+        - oauth.sggovt-ext.demoaxway.com
+    route:
+    - destination:
+        host: traffic.external.svc.cluster.local
+        port:
+          number: 8089

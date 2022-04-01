@@ -2,13 +2,12 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: petstore
-  namespace: test
+  namespace: external
 spec:
   hosts:
   - petstore.swagger.io
   ports:
   - number: 443
-    name: https
-    protocol: HTTPS
+    name: tls
+    protocol: TLS
   resolution: DNS
-  location: MESH_EXTERNAL

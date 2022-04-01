@@ -57,6 +57,7 @@ anm:
 
    # Controls the service for ANM incl. belonging ingress resources
    service:
+      httpPortName: "https-anm"
       type: "ClusterIP"
       loadBalancerIP: ""
       port: 8090
@@ -218,7 +219,7 @@ apimgr:
       labels: {}
       annotations: {}
       ports:
-      - name: manager
+      - name: https-manager
         port: 8075
         targetPort: 8075
         nodePort: ""
@@ -348,16 +349,18 @@ apimgr:
 
    # Customize API-Manager
    # https://docs.axway.com/bundle/axway-open-docs/page/docs/apim_administration/apimgr_admin/api_mgmt_custom/index.html#customize-api-manager-data
-   app-Config: 
+   appconfig: 
       # Set to false if you prefer to include (bake in) your jvm.xml using the mergeDir option
-      enabled: true
-      user: |
-      organization: |
-         DGPSystemID: {
-            label: 'DGP System ID'
-         }
-      application: |
-      api: |
+      enabled: false
+      user: {}
+      organization: {}
+      # Example to adding a custom field in Organization
+      # organization: |
+      #   DGPSystemID: {
+      #      label: 'DGP System ID'
+      #   }
+      application: {}
+      api: {}
 
 
 ##################################################################################################################################
@@ -389,28 +392,28 @@ apitraffic:
       labels: {}
       annotations: {}
       ports:
-      - name: traffic
+      - name: https-traffic
         port: 8065
         targetPort: 8065
         nodePort: ""
         ingress: 
           enabled: true
           host: traffic
-      - name: oauth
+      - name: https-oauth
         port: 8089
         targetPort: 8089
         nodePort: ""
         ingress: 
           enabled: false
           host: oauth
-      - name: tls
+      - name: https-tls
         port: 8081
         targetPort: 8081
         nodePort: ""
         ingress: 
           enabled: false
           host: tls
-      - name: plain
+      - name: http-plain
         port: 8080
         targetPort: 8080
         nodePort: ""
@@ -564,6 +567,8 @@ apiportal:
    service:
       type: "ClusterIP"
       loadBalancerIP: ""
+      httpPortName: http-portal
+      httpsPortName: https-portal
       httpPort: 80
       httpsPort: 443
 

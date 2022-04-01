@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: apim-demo-int
+    meta.helm.sh/release-namespace: internal
+  labels:
+    app.kubernetes.io/component: anm
+    app.kubernetes.io/instance: apim-demo-int
+    app.kubernetes.io/name: anm
+    app.kubernetes.io/version: 1.1.1
+  name: anmui
+  namespace: internal
+spec:
+  ports:
+  - name: gatewaymanagerui
+    port: 8091
+    protocol: TCP
+    targetPort: 8091
+  selector:
+    app.kubernetes.io/component: anm
+    app.kubernetes.io/instance: apim-demo-int
+    app.kubernetes.io/name: anm
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,51 @@
+#!/bin/bash
+# Variables
+
+#Set global variables used in assets naming
+EMT_SCRIPT_VERSION=2.3.0
+APIM_VERSION=7.7
+APIM_RELEASE=20211130
+ENV=demo
+
+# Set images name and fed used
+ANM_OUTPUT_NAME=anm-${ENV}-${APIM_VERSION}-${APIM_RELEASE}
+ANM_FED_VERSION=v1.5
+GTW_EXT_OUTPUT_NAME=gtw-${ENV}-ext-${APIM_VERSION}-${APIM_RELEASE}
+GTW_EXT_FED_VERSION=v1.6
+GTW_INT_OUTPUT_NAME=gtw-${ENV}-int-${APIM_VERSION}-${APIM_RELEASE}
+GTW_INT_FED_VERSION=v1.4
+BASE_IMAGE_NAME=base-${ENV}-${APIM_VERSION}-${APIM_RELEASE}
+BASE_BUILDTAG=1.0.0
+ANM_BUILDTAG=1.1.2
+GTW_EXT_BUILDTAG=1.1.0
+GTW_INT_BUILDTAG=1.1.0
+OS=centos7
+
+#Set directories to build images
+CERTS_DIR=certs
+FED_DIR="apiprojects"
+EMT_DIR="apigw-emt-scripts-${EMT_SCRIPT_VERSION}"
+TMP_DIR=temp
+ANM_MERGE_DIR="${TMP_DIR}/anm/merge/apigateway"
+GTW_MERGE_DIR="${TMP_DIR}/apigtw/merge/apigateway"
+SOURCE_DIR="Sources"
+
+# Set default login/mdp
+ANM_USERNAME=admin
+ANM_PASSWORD=changeme
+
+# Set groups
+APIM_GRP_EXT_NAME="${ENV}-ext-grp"
+APIM_GRP_INT_NAME="${ENV}-int-grp"
+
+# Domain certificates
+CERT_PASS="changeme"
+CERT_ORG="Axway"
+CERT_ORGUNIT="sggovt"
+CERT_SIGN_ALG="SHA512"
+
+#Docker repository
+REPO_URL=docker-registry.demo.axway.com
+REPO_PATH="demo-public"
+REPO_USERNAME='robot$Gitlab-build'
+REPO_PASSWORD='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTMxMjQyNjYsImlhdCI6MTY0NTM0ODI2NiwiaXNzIjoiaGFyYm9yLXRva2VuLWRlZmF1bHRJc3N1ZXIiLCJpZCI6NTUsInBpZCI6MTYsImFjY2VzcyI6W3siUmVzb3VyY2UiOiIvcHJvamVjdC8xNi9yZXBvc2l0b3J5IiwiQWN0aW9uIjoicHVzaCIsIkVmZmVjdCI6IiJ9LHsiUmVzb3VyY2UiOiIvcHJvamVjdC8xNi9oZWxtLWNoYXJ0IiwiQWN0aW9uIjoicmVhZCIsIkVmZmVjdCI6IiJ9LHsiUmVzb3VyY2UiOiIvcHJvamVjdC8xNi9oZWxtLWNoYXJ0LXZlcnNpb24iLCJBY3Rpb24iOiJjcmVhdGUiLCJFZmZlY3QiOiIifV19.Mssq5ogpV7tmtaLMs1_r-WTHzV8qEczislOS0CVcDCiwqcftdVbF6P55yfkiM3-21pM7ThXq3jNWsMv9E07-s0jhHPUxlCvcZ4VsAMITU-GUAnfhyZ_XpMR-hs1f6-28M07PrQZ9cOpiwmv1gUkviNUmiCXh-eugAnu-oPxkHJGFLJUmvXrKzwmM3aToLUIpC3lSGuuoi-EWKQ0sYq4YiYwbYEnxgSGAZ_VRttQxChrD3bsw5vKOa-VY2Ye98zHo_ouAXXlePQmLfgAoqY4w1G94kA7_Oo5-Xu60mRjSLnve5US0gMGQGGEIjbSwMeraUN-NyVTlt3vkzHFFVjOYVRj-5GlXpp-Ru549ESrc4sh1NRV_lVoVt06VS_pBfxg6NXJmV_cjPZF9aBH2LeUBfxR3rIZTGn0VJB_rRgTuMFMMxwbVzxwJehCr-7CxvkWK7Tp6ChZtN_rQDJIXSofY34JDczNMQu1STdHXUTl7XyFjkT4syyABsqfLo6e8M3qmSAqnuEVYORhexaDuIfyvjYkw9mAq-aH5IkLwi_6iQqkI0pnBNc-1EUEA1kGvbt7Mnn3nzMUyOvOe1-D2uY1KNHtsI4_vJ322bG6Em0Mc80PNy9xZPtI2SyVpxoNrX6PhHnMUlYJbrlvjB43_83mQDuVh0C5diHRlrbUCVk7ONKI'

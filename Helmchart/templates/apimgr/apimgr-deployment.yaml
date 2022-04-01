@@ -57,6 +57,11 @@ spec:
               - key: apimgr-jvmxml
                 path: jvm.xml
       {{- end }}
+      {{- if .Values.apimgr.jvm.enabled }}
+        - name: apimgr-app-config
+          configMap:
+            name: {{ .Release.Name }}-appConfig
+      {{- end }}
         - name: events
 {{- if .Values.pvcs.events.enabled }}
           persistentVolumeClaim:
@@ -183,6 +188,10 @@ spec:
           - name: apimgr-jvmxml
             mountPath: "/opt/Axway/apigateway/groups/emt-group/emt-service/conf/jvm.xml"
             subPath: jvm.xml
+        {{- end }}
+        {{- if .Values.apimgr.appconfig.enabled }}
+          - name: apimgr-app-config
+            mountPath: "/apigateway/webapps/apiportal/vordel/apiportal/app"
         {{- end }}
 {{- if $licenseSecret }}
           - name: license

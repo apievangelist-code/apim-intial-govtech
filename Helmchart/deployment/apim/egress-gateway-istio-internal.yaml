@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: egress-apim-int
+  namespace: internal
+spec:
+  selector:
+    istio: istio-egressgateway-int
+  servers:
+  - port:
+      number: 80
+      name: https-port-for-tls-origination
+      protocol: HTTPS
+    hosts:
+    - "*"
+    tls:
+      mode: ISTIO_MUTUAL
+---

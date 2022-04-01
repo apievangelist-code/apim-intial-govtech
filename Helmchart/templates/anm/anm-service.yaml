@@ -17,17 +17,13 @@ spec:
 {{ toYaml . | indent 4 }}
 {{- end }}
   ports:
-  - name: {{ .Values.anm.service.httpPortName | default "http" }}
+  - name: {{ .Values.anm.service.httpPortName | default "https" }}
     port: {{ .Values.anm.service.port }}
 {{- if .Values.anm.service.nodePort }}
     nodePort: {{ .Values.anm.service.nodePort }}
 {{- end }}
     protocol: TCP
     targetPort: {{ .Values.anm.containerPorts.anm }}
-  - name: gatewaymanagerui
-    port: {{ .Values.anm.trafficPortUI }}
-    targetPort: {{ .Values.anm.trafficPortUI }}
-    protocol: TCP
   selector:
     {{- include "anm.selectorLabels" . | nindent 4 }}
   sessionAffinity: ClientIP

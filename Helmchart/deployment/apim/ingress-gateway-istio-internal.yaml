@@ -41,9 +41,18 @@ spec:
         - anm.sggovt-int.demoaxway.com
     route:
     - destination:
-        host: anm.internal.svc.cluster.local
+        host: anmui.internal.svc.cluster.local
         port:
           number: 8091
+  - match:
+    - port: 443
+      sniHosts:
+        - anmint.sggovt-int.demoaxway.com
+    route:
+    - destination:
+        host: anm.internal.svc.cluster.local
+        port:
+          number: 8090
   - match:
     - port: 443
       sniHosts:
